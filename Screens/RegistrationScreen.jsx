@@ -12,9 +12,8 @@ import {
 } from "react-native";
 import PhotoBG from "../assets/PhotoBG.jpg";
 import addPhoto from "../assets/addPhotoBtn.jpg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useBackHandler } from "@react-native-community/hooks";
 
 const RegistrationScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -28,20 +27,31 @@ const RegistrationScreen = () => {
 
   const navigation = useNavigation();
 
-  const backHandlerPress = () => {
-    if (isShowKeyboard) {
-      Keyboard.dismiss();
-      setShowKeyboard(false);
-      return true;
-    }
-    return true;
-  };
-  useBackHandler(backHandlerPress);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setShowKeyboard(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setShowKeyboard(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const validateLogin = () => {
-    if (login.length < 8) {
-      setValidationLoginErr("Login should be at least 8 characters");
-      alert("Login should be at least 8 characters");
+    if (login.length < 6) {
+      setValidationLoginErr("Login should be at least 6 characters");
+      alert("Login should be at least 6 characters");
     } else {
       setValidationLoginErr("");
     }

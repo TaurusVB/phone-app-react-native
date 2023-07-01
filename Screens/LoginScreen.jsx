@@ -21,19 +21,28 @@ const LoginScreen = () => {
   const [validationPasswordErr, setValidationPasswordErr] = useState("");
   const [validationEmailErr, setValidationEmailErr] = useState("");
   const [isShownPassword, setIsShownPassword] = useState(true);
-
   const navigation = useNavigation();
 
-  const backHandlerPress = () => {
-    if (isShowKeyboard) {
-      Keyboard.dismiss();
-      setShowKeyboard(false);
-      return true;
-    }
-    navigation.goBack();
-    return true;
-  };
-  useBackHandler(backHandlerPress);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setShowKeyboard(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setShowKeyboard(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,19 +74,17 @@ const LoginScreen = () => {
   };
 
   const handleSignIn = () => {
-    setShowKeyboard(false);
-    Keyboard.dismiss();
     setEmail("");
     setPassword("");
   };
 
-  const keyboardHide = () => {
+  const hideKeyboard = () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
   };
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={hideKeyboard}>
       <View style={styles.container}>
         <ImageBackground source={PhotoBG} style={styles.image}>
           <View style={styles.containerScreen}>
@@ -117,7 +124,9 @@ const LoginScreen = () => {
                       style={styles.passwordShowBtn}
                       onPress={() => setIsShownPassword(!isShownPassword)}
                     >
-                      <Text style={styles.passwordShowText}>{isShownPassword ? 'Показати' : 'Сховати'}</Text>
+                      <Text style={styles.passwordShowText}>
+                        {isShownPassword ? "Показати" : "Сховати"}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
