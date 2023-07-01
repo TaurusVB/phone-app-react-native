@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,16 +11,62 @@ import {
   ImageBackground,
 } from "react-native";
 import PhotoBG from "../assets/PhotoBG.jpg";
+import { useNavigation } from "@react-navigation/native";
+import { useBackHandler } from "@react-native-community/hooks";
 
 const LoginScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [validationPasswordErr, setValidationPasswordErr] = useState("");
+  const [validationEmailErr, setValidationEmailErr] = useState("");
+  const [isShownPassword, setIsShownPassword] = useState(true);
+
+  const navigation = useNavigation();
+
+  const backHandlerPress = () => {
+    if (isShowKeyboard) {
+      Keyboard.dismiss();
+      setShowKeyboard(false);
+      return true;
+    }
+    navigation.goBack();
+    return true;
+  };
+  useBackHandler(backHandlerPress);
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setValidationEmailErr("Invalid email");
+      alert("Invalid email: it must contain @ and domain part, invalid space");
+    } else {
+      setValidationEmailErr("");
+    }
+  };
+
+  const validatePassword = () => {
+    if (password.length < 8) {
+      setValidationPasswordErr("Password should be at least 8 characters");
+      alert("Password should be at least 8 characters");
+    } else {
+      setValidationPasswordErr("");
+    }
+  };
+
+  const isValidateData = () => {
+    validateEmail();
+    validatePassword();
+    if (!validationEmailErr && !validationPasswordErr && email && password) {
+      handleSignIn();
+      return true;
+    }
+    return false;
+  };
 
   const handleSignIn = () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(email, password);
     setEmail("");
     setPassword("");
   };
@@ -54,30 +100,39 @@ const LoginScreen = () => {
                     placeholder={"Адреса електронної пошти"}
                     onChangeText={(value) => setEmail(value)}
                     value={email}
+                    inputMode={"email"}
                   />
                   <View>
                     <TextInput
                       style={styles.input}
                       placeholder={"Пароль"}
-                      secureTextEntry={true}
+                      secureTextEntry={isShownPassword}
                       onFocus={() => {
                         setShowKeyboard(true);
                       }}
                       onChangeText={(value) => setPassword(value)}
                       value={password}
                     />
-                    <TouchableOpacity style={styles.passwordShowBtn}>
-                      <Text style={styles.passwordShowText}>Показати</Text>
+                    <TouchableOpacity
+                      style={styles.passwordShowBtn}
+                      onPress={() => setIsShownPassword(!isShownPassword)}
+                    >
+                      <Text style={styles.passwordShowText}>{isShownPassword ? 'Показати' : 'Сховати'}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegistration}
-                  onPress={handleSignIn}
+                  onPress={() => {
+                    isValidateData() && navigation.navigate("Home");
+                  }}
                 >
                   <Text style={styles.textRegistration}>Увійти</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnLogIn}>
+                <TouchableOpacity
+                  style={styles.btnLogIn}
+                  onPress={() => navigation.navigate("Registration")}
+                >
                   <Text style={styles.textLogIn}>
                     Немає акаунту? Зареєструватися
                   </Text>

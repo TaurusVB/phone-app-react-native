@@ -13,25 +13,87 @@ import {
 import PhotoBG from "../assets/PhotoBG.jpg";
 import addPhoto from "../assets/addPhotoBtn.jpg";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useBackHandler } from "@react-native-community/hooks";
 
 const RegistrationScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
   const [email, setEmail] = useState("");
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [validationLoginErr, setValidationLoginErr] = useState("");
+  const [validationPasswordErr, setValidationPasswordErr] = useState("");
+  const [validationEmailErr, setValidationEmailErr] = useState("");
+  const [isShownPassword, setIsShownPassword] = useState(true);
 
-  const handleSignIn = () => {
-    setShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(login, email, password);
-    setEmail("");
-    setLogin("");
-    setPassword("");
+  const navigation = useNavigation();
+
+  const backHandlerPress = () => {
+    if (isShowKeyboard) {
+      Keyboard.dismiss();
+      setShowKeyboard(false);
+      return true;
+    }
+    return true;
+  };
+  useBackHandler(backHandlerPress);
+
+  const validateLogin = () => {
+    if (login.length < 8) {
+      setValidationLoginErr("Login should be at least 8 characters");
+      alert("Login should be at least 8 characters");
+    } else {
+      setValidationLoginErr("");
+    }
+  };
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setValidationEmailErr("Invalid email");
+      alert("Invalid email: it must contain @ and domain part, invalid space");
+    } else {
+      setValidationEmailErr("");
+    }
+  };
+
+  const validatePassword = () => {
+    if (password.length < 8) {
+      setValidationPasswordErr("Password should be at least 8 characters");
+      alert("Password should be at least 8 characters");
+    } else {
+      setValidationPasswordErr("");
+    }
+  };
+
+  const isValidateData = () => {
+    validateLogin();
+    validateEmail();
+    validatePassword();
+    if (
+      !validationEmailErr &&
+      !validationPasswordErr &&
+      !validationLoginErr &&
+      email &&
+      password
+    ) {
+      handleSignIn();
+      return true;
+    }
+    return false;
   };
 
   const keyboardHide = () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
+  };
+
+  const handleSignIn = () => {
+    setShowKeyboard(false);
+    Keyboard.dismiss();
+    setEmail("");
+    setLogin("");
+    setPassword("");
   };
 
   return (
@@ -75,7 +137,7 @@ const RegistrationScreen = () => {
                     <TextInput
                       style={styles.input}
                       placeholder={"Пароль"}
-                      secureTextEntry={true}
+                      secureTextEntry={isShownPassword}
                       onFocus={() => {
                         setShowKeyboard(true);
                       }}
@@ -84,19 +146,26 @@ const RegistrationScreen = () => {
                     />
                     <TouchableOpacity
                       style={styles.passwordShowBtn}
-                      onPress={handleSignIn}
+                      onPress={() => setIsShownPassword(!isShownPassword)}
                     >
-                      <Text style={styles.passwordShowText}>Показати</Text>
+                      <Text style={styles.passwordShowText}>
+                        {isShownPassword ? "Показати" : "Сховати"}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegistration}
-                  onPress={handleSignIn}
+                  onPress={() => {
+                    isValidateData() && navigation.navigate("Home");
+                  }}
                 >
                   <Text style={styles.textRegistration}>Зареєстуватися</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnLogIn}>
+                <TouchableOpacity
+                  style={styles.btnLogIn}
+                  onPress={() => navigation.navigate("Login")}
+                >
                   <Text style={styles.textLogIn}>Вже є акаунт? Увійти</Text>
                 </TouchableOpacity>
               </View>
@@ -170,7 +239,6 @@ const styles = StyleSheet.create({
   },
   textRegistration: {
     fontSize: 16,
-    fontFamily: "Roboto-Italic",
     color: "#fff",
   },
   btnLogIn: { borderColor: "#FF6C00", marginTop: 16 },
