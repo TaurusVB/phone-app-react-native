@@ -1,20 +1,30 @@
-import { Text, View } from "react-native";
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
+import CommentsPostScreen from "./nestedScreens/CommentsScreen";
+import MapPostScreen from "./nestedScreens/MapScreen";
+
+const NestedScreen = createStackNavigator();
 
 const PostsScreen = () => {
   return (
-    <View
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#fff",
-        borderTopWidth: 1,
-        borderTopColor: "rgba(33, 33, 33, 0.8)",
-      }}
-    >
-      <Text>PostsScreen</Text>
-    </View>
+    <NestedScreen.Navigator initialRouteName="DefaultPosts">
+      <NestedScreen.Screen
+        name="DefaultPosts"
+        component={DefaultPostsScreen}
+        options={{ headerShown: false }}
+      />
+      <NestedScreen.Screen
+        name="CommentsPost"
+        component={CommentsPostScreen}
+        options={{ title: "Коментарі" }}
+      />
+      <NestedScreen.Screen
+        name="MapPost"
+        component={MapPostScreen}
+        options={{ title: "Локація" }}
+      />
+    </NestedScreen.Navigator>
   );
 };
 

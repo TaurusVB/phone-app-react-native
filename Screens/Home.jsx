@@ -1,6 +1,7 @@
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
+import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   SimpleLineIcons,

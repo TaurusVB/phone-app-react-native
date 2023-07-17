@@ -27,7 +27,6 @@ export default function App() {
           component={Home}
           options={{
             headerShown: false,
-            
           }}
         />
       </MainStack.Navigator>
