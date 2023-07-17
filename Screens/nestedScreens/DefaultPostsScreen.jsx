@@ -27,7 +27,7 @@ const DefaultPostsScreen = ({ route, navigation }) => {
   };
 
   const handlePostComments = () => {
-    navigation.navigate("CommentsPost", { coords });
+    navigation.navigate("CommentsPost");
   };
 
   const renderItem = ({ item }) => {
