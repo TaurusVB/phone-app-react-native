@@ -10,8 +10,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import PhotoBG from "../assets/PhotoBG.jpg";
-import addPhoto from "../assets/addPhotoBtn.jpg";
+import PhotoBG from "../../assets/PhotoBG.jpg";
+import addPhoto from "../../assets/addPhotoBtn.jpg";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 

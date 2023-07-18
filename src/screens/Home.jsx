@@ -11,7 +11,7 @@ import {
 } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import CreatePostBtn from "../src/components/CreatePostBtn";
+import CreatePostBtn from "../components/CreatePostBtn";
 const Tab = createBottomTabNavigator();
 
 const Home = () => {

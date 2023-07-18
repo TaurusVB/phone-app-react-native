@@ -1,7 +1,7 @@
 import { Text, View, FlatList, Image } from "react-native";
 import { useState, useEffect } from "react";
-import UserPhoto from "../../assets/UserPhoto.jpg";
-import Comments from "../../assets/icons/message-circle.jpg";
+import UserPhoto from "../../../assets/UserPhoto.jpg";
+import Comments from "../../../assets/icons/message-circle.jpg";
 import uuid from "react-native-uuid";
 import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";

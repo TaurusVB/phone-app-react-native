@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
 } from "react-native";
-import PhotoBG from "../assets/PhotoBG.jpg";
+import PhotoBG from "../../assets/PhotoBG.jpg";
 import { useNavigation } from "@react-navigation/native";
 import { useBackHandler } from "@react-native-community/hooks";
 
