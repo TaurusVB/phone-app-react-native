@@ -1,43 +1,58 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { register, logIn, logOut, refreshUser } from './operations';
+import { createSlice } from "@reduxjs/toolkit";
+import { registerDB, loginDB, logOut, authStateChanged } from "./operations";
 
 const initialState = {
-  user: { name: null, email: null },
-  token: null,
+  user: { userId: null, nickname: null, email: '' },
   isLoggedIn: false,
-  isRefreshing: false,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
+
   extraReducers: {
-    [register.fulfilled](state, action) {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+    [registerDB.fulfilled](state, action) {
+      state.user.userId = action.payload.uid;
+      state.user.nickname = action.payload.displayName;
       state.isLoggedIn = true;
     },
-    [logIn.fulfilled](state, action) {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+    [loginDB.fulfilled](state, action) {
+      state.user.userId = action.payload.uid;
+      state.user.nickname = action.payload.displayName;
       state.isLoggedIn = true;
     },
     [logOut.fulfilled](state) {
-      state.user = { name: null, email: null };
-      state.token = null;
+      state.user = { userId: null, nickname: null };
       state.isLoggedIn = false;
     },
-    [refreshUser.pending](state) {
-      state.isRefreshing = true;
-    },
-    [refreshUser.fulfilled](state, action) {
-      state.user = action.payload;
+    [authStateChanged.fulfilled](state, action) {
+      state.user.userId = action.payload.uid;
+      state.user.nickname = action.payload.displayName;
       state.isLoggedIn = true;
-      state.isRefreshing = false;
     },
-    [refreshUser.rejected](state) {
-      state.isRefreshing = false;
-    },
+    // updateUser: {
+    //   reducer(state, { payload }) {
+    //     return { ...state, ...payload };
+    //   },
+    //   prepare(data) {
+    //     return {
+    //       user: { userId: data.uid, nickname: data.displayName },
+    //       token: data.accessToken,
+    //       isLoggedIn: true,
+    //     };
+    //   },
+    // },
+    // [refreshUser.pending](state) {
+    //   state.isRefreshing = true;
+    // },
+    // [refreshUser.fulfilled](state, action) {
+    //   state.user = action.payload;
+    //   state.isLoggedIn = true;
+    //   state.isRefreshing = false;
+    // },
+    // [refreshUser.rejected](state) {
+    //   state.isRefreshing = false;
+    // },
   },
 });
 

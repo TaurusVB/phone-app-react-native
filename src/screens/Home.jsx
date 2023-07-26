@@ -12,10 +12,18 @@ import {
 import { TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CreatePostBtn from "../components/CreatePostBtn";
+import { useDispatch } from "react-redux";
+import { logOut } from "../redux/auth/operations";
+
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const handleLogOut = () => {
+    dispatch(logOut());
+  };
 
   return (
     <Tab.Navigator
@@ -30,10 +38,7 @@ const Home = () => {
         component={PostsScreen}
         options={{
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Login")}
-              style={{ padding: 10 }}
-            >
+            <TouchableOpacity onPress={handleLogOut} style={{ padding: 10 }}>
               <Feather name="log-out" size={24} color="#BDBDBD" />
             </TouchableOpacity>
           ),

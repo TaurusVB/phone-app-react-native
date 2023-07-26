@@ -19,7 +19,10 @@ const MapPostScreen = ({ route }) => {
           longitudeDelta: 0.006,
         }}
       >
-        <Marker coordinate={{ latitude, longitude }} title="Тут було зроблено це фото!" />
+        <Marker
+          coordinate={{ latitude, longitude }}
+          title="Тут було зроблено це фото!"
+        />
       </MapView>
     </View>
   );

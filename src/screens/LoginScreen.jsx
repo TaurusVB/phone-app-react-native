@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import PhotoBG from "../../assets/PhotoBG.jpg";
 import { useNavigation } from "@react-navigation/native";
-import { useBackHandler } from "@react-native-community/hooks";
+import { loginDB } from "../redux/auth/operations";
+import { useDispatch } from "react-redux";
 
 const LoginScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -21,6 +22,8 @@ const LoginScreen = () => {
   const [validationPasswordErr, setValidationPasswordErr] = useState("");
   const [validationEmailErr, setValidationEmailErr] = useState("");
   const [isShownPassword, setIsShownPassword] = useState(true);
+
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -74,6 +77,7 @@ const LoginScreen = () => {
   };
 
   const handleSignIn = () => {
+    dispatch(loginDB({ email, password }));
     setEmail("");
     setPassword("");
   };
@@ -132,9 +136,7 @@ const LoginScreen = () => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegistration}
-                  onPress={() => {
-                    isValidateData() && navigation.navigate("Home");
-                  }}
+                  onPress={isValidateData}
                 >
                   <Text style={styles.textRegistration}>Увійти</Text>
                 </TouchableOpacity>

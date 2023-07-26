@@ -12,7 +12,14 @@ import { Keyboard } from "react-native";
 import { useEffect, useState } from "react";
 import { Camera } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import uuid from "react-native-uuid";
+import { auth, db, storage } from "../../config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useDispatch, useSelector } from "react-redux";
+import { writeDataToFirestore } from "../redux/posts/operations";
+import { selectUser } from "../redux/auth/selectors";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -23,7 +30,12 @@ const CreatePostsScreen = ({ navigation }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [locationParams, setLocationParams] = useState({});
 
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
   useEffect(() => {
+    requestLocationPermission();
+
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
@@ -45,22 +57,29 @@ const CreatePostsScreen = ({ navigation }) => {
     };
   }, []);
 
+  const requestLocationPermission = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+    } else {
+      // Permission granted, get current location
+      try {
+        const location = await Location.getCurrentPositionAsync({});
+        await setLocationParams(location);
+      } catch (error) {
+        console.log("Error getting current location:", error);
+      }
+    }
+  };
+
   const keyboardHide = () => {
-    Keyboard.dismiss(), setShowKeyboard(false);
+    Keyboard.dismiss();
+    setShowKeyboard(false);
   };
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
-
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setLocationParams(location);
   };
 
   const sendPost = () => {
@@ -68,17 +87,45 @@ const CreatePostsScreen = ({ navigation }) => {
       alert("Всі поля повинні бути заповнені!");
       return;
     }
+    uploadPostToServer();
+    navigation.navigate("DefaultPosts");
 
-    navigation.navigate("DefaultPosts", {
-      photo,
-      locationParams,
-      postName,
-      postLocation,
-    });
+    resetCreatePost();
+  };
+
+  const uploadPhotoToserver = async () => {
+    const metadata = {
+      contentType: "image/jpeg",
+    };
+    const uniqId = uuid.v4();
+
+    const response = await fetch(photo);
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, "images/" + uniqId);
+    const uploadTask = await uploadBytesResumable(storageRef, blob, metadata);
+
+    return await getDownloadURL(storageRef);
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToserver();
+
+    dispatch(
+      writeDataToFirestore({
+        userId: user.userId,
+        userName: auth.currentUser.displayName,
+        postName,
+        postLocation,
+        photoUrl: photo,
+        location: locationParams,
+        email: auth.currentUser.email,
+      })
+    );
   };
 
   const resetCreatePost = () => {
-    // setPhoto(null);
+    setPhoto(null);
     setPostLocation("");
     setPostName("");
   };
@@ -108,6 +155,7 @@ const CreatePostsScreen = ({ navigation }) => {
           </TouchableOpacity>
         </Camera>
       </View>
+
       <TouchableWithoutFeedback onPress={keyboardHide}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -120,13 +168,14 @@ const CreatePostsScreen = ({ navigation }) => {
               borderTopWidth: 1,
               borderTopColor: "rgba(33, 33, 33, 0.8)",
               display: photo ? "flex" : "none",
-              marginBottom: isShowKeyboard ? 20 : 144,
+              justifyContent: "flex-end",
             }}
           >
             <View
               style={{
                 marginHorizontal: 16,
                 marginTop: 32,
+                marginBottom: isShowKeyboard ? -55 : 22,
               }}
             >
               <TouchableOpacity activeOpacity={0.6}>
@@ -170,9 +219,15 @@ const CreatePostsScreen = ({ navigation }) => {
                       borderRadius: 30,
                       alignItems: "center",
                       justifyContent: "center",
+                      opacity: 0.3,
                     }}
                   >
-                    <Image source={CameraIcon} />
+                    <FontAwesome
+                      name="camera"
+                      size={24}
+                      color="white"
+                      iconStyle={{ opacity: 1 }}
+                    />
                   </View>
                 </View>
                 <Text style={{ color: "rgba(189, 189, 189, 1)", fontSize: 16 }}>
@@ -201,7 +256,7 @@ const CreatePostsScreen = ({ navigation }) => {
                   name="map-pin"
                   size={24}
                   color="rgba(189, 189, 189, 1)"
-                  style={{ position: "absolute", top: 30 }}
+                  style={{ position: "absolute", top: 30, width: 24 }}
                 />
 
                 <TextInput
@@ -219,7 +274,7 @@ const CreatePostsScreen = ({ navigation }) => {
                     borderBottomWidth: 1,
                     paddingTop: 15,
                     paddingBottom: 15,
-                    paddingLeft: 28,
+                    paddingLeft: 30,
                   }}
                 />
               </View>

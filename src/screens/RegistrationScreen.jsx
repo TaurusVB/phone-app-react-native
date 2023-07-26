@@ -14,6 +14,8 @@ import PhotoBG from "../../assets/PhotoBG.jpg";
 import addPhoto from "../../assets/addPhotoBtn.jpg";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { registerDB } from "../redux/auth/operations";
+import { useDispatch } from "react-redux";
 
 const RegistrationScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -26,6 +28,7 @@ const RegistrationScreen = () => {
   const [isShownPassword, setIsShownPassword] = useState(true);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -101,6 +104,7 @@ const RegistrationScreen = () => {
   const handleSignIn = () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
+    dispatch(registerDB({ login, email, password }));
     setEmail("");
     setLogin("");
     setPassword("");
@@ -166,9 +170,7 @@ const RegistrationScreen = () => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegistration}
-                  onPress={() => {
-                    isValidateData() && navigation.navigate("Home");
-                  }}
+                  onPress={isValidateData}
                 >
                   <Text style={styles.textRegistration}>Зареєстуватися</Text>
                 </TouchableOpacity>
