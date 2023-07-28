@@ -12,6 +12,8 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../../config";
 
 const DefaultPostsScreen = ({ navigation }) => {
+  const [lengthPosts, setLengthPosts] = useState(0);
+
   const dispatch = useDispatch();
   const allPosts = useSelector(selectAllPosts);
 
@@ -23,14 +25,26 @@ const DefaultPostsScreen = ({ navigation }) => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    setLengthPosts(allPosts.length - 1);
+  }, [allPosts]);
+
   const handlePostComments = (postId, photoUrl) => {
     navigation.navigate("CommentsPost", { postId, photoUrl });
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = (obj) => {
+    const { item } = obj;
     const { data } = item;
     return (
-      <View style={{ marginTop: 32, flex: 1, marginHorizontal: 16 }}>
+      <View
+        style={{
+          marginTop: 32,
+          flex: 1,
+          marginHorizontal: 16,
+          marginBottom: lengthPosts === obj.index ? 32 : 0,
+        }}
+      >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image source={UserPhoto} />
           <View style={{ marginLeft: 8 }}>
@@ -105,7 +119,7 @@ const DefaultPostsScreen = ({ navigation }) => {
       style={{
         justifyContent: "center",
         width: "100%",
-        height: "100%",
+        height: "95%",
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderTopColor: "rgba(33, 33, 33, 0.8)",
@@ -116,6 +130,7 @@ const DefaultPostsScreen = ({ navigation }) => {
         data={allPosts}
         keyExtractor={() => uuid.v4()}
         renderItem={renderItem}
+        style={{}}
       />
     </View>
   );

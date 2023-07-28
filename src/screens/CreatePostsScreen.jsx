@@ -20,6 +20,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { writeDataToFirestore } from "../redux/posts/operations";
 import { selectUser } from "../redux/auth/selectors";
+import { useIsFocused } from "@react-navigation/native";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -29,9 +30,11 @@ const CreatePostsScreen = ({ navigation }) => {
   const [postLocation, setPostLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
   const [locationParams, setLocationParams] = useState({});
+  const [isDoPhoto, setIsDoPhoto] = useState(isFocused);
 
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     requestLocationPermission();
@@ -57,6 +60,13 @@ const CreatePostsScreen = ({ navigation }) => {
     };
   }, []);
 
+  useEffect(() => {
+    // Виконується, коли екран стає активним (отримує фокус)
+    if (isFocused) {
+      setIsDoPhoto(!isFocused);
+    }
+  }, [isFocused]);
+
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -79,6 +89,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
+    setIsDoPhoto(true);
     setPhoto(photo.uri);
   };
 
@@ -130,9 +141,13 @@ const CreatePostsScreen = ({ navigation }) => {
     setPostName("");
   };
 
+  const updatePhoto = () => {
+    setIsDoPhoto(false);
+  };
+
   return (
     <>
-      <View style={{ flex: 1, display: photo ? "none" : "flex" }}>
+      <View style={{ flex: 1, display: isDoPhoto ? "none" : "flex" }}>
         <Camera
           style={{ flex: 1, alignItems: "center", justifyContent: "flex-end" }}
           ref={setCamera}
@@ -167,7 +182,7 @@ const CreatePostsScreen = ({ navigation }) => {
               backgroundColor: "#fff",
               borderTopWidth: 1,
               borderTopColor: "rgba(33, 33, 33, 0.8)",
-              display: photo ? "flex" : "none",
+              display: isDoPhoto ? "flex" : "none",
               justifyContent: "flex-end",
             }}
           >
@@ -178,7 +193,7 @@ const CreatePostsScreen = ({ navigation }) => {
                 marginBottom: isShowKeyboard ? -55 : 22,
               }}
             >
-              <TouchableOpacity activeOpacity={0.6}>
+              <TouchableOpacity activeOpacity={0.6} onPress={updatePhoto}>
                 <View
                   style={{
                     width: "100%",
@@ -219,19 +234,19 @@ const CreatePostsScreen = ({ navigation }) => {
                       borderRadius: 30,
                       alignItems: "center",
                       justifyContent: "center",
-                      opacity: 0.3,
+                      opacity: photo ? 0.3 : 0.8,
                     }}
                   >
                     <FontAwesome
                       name="camera"
                       size={24}
-                      color="white"
-                      iconStyle={{ opacity: 1 }}
+                      color={photo ? "white" : "grey"}
+                      iconStyle={{ opacity: photo ? 0.3 : 0.8 }}
                     />
                   </View>
                 </View>
                 <Text style={{ color: "rgba(189, 189, 189, 1)", fontSize: 16 }}>
-                  Завантажте фото
+                  {photo ? "Редагувати фото" : "Завантажте фото"}
                 </Text>
               </TouchableOpacity>
               <TextInput
@@ -251,7 +266,7 @@ const CreatePostsScreen = ({ navigation }) => {
                   paddingBottom: 15,
                 }}
               />
-              <View>
+              <View style={{ paddingLeft: 30 }}>
                 <Feather
                   name="map-pin"
                   size={24}
