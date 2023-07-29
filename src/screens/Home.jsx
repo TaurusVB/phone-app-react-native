@@ -1,7 +1,6 @@
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
-import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   SimpleLineIcons,
@@ -11,7 +10,6 @@ import {
 } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import CreatePostBtn from "../components/CreatePostBtn";
 import { useDispatch } from "react-redux";
 import { logOut } from "../redux/auth/operations";
 

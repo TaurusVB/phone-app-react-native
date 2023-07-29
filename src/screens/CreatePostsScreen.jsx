@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { writeDataToFirestore } from "../redux/posts/operations";
 import { selectUser } from "../redux/auth/selectors";
 import { useIsFocused } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -143,26 +144,20 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const updatePhoto = () => {
     setIsDoPhoto(false);
+    keyboardHide();
   };
 
   return (
     <>
-      <View style={{ flex: 1, display: isDoPhoto ? "none" : "flex" }}>
-        <Camera
-          style={{ flex: 1, alignItems: "center", justifyContent: "flex-end" }}
-          ref={setCamera}
-        >
+      <View
+        style={{
+          ...styles.cameraContainer,
+          display: isDoPhoto ? "none" : "flex",
+        }}
+      >
+        <Camera style={styles.camera} ref={setCamera}>
           <TouchableOpacity
-            style={{
-              borderColor: "#fff",
-              borderRadius: 35,
-              width: 70,
-              height: 70,
-              borderWidth: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 40,
-            }}
+            style={styles.btnCamera}
             activeOpacity={0.7}
             onPress={takePhoto}
           >
@@ -177,63 +172,26 @@ const CreatePostsScreen = ({ navigation }) => {
         >
           <View
             style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#fff",
-              borderTopWidth: 1,
-              borderTopColor: "rgba(33, 33, 33, 0.8)",
+              ...styles.createPostContainer,
               display: isDoPhoto ? "flex" : "none",
-              justifyContent: "flex-end",
             }}
           >
             <View
               style={{
-                marginHorizontal: 16,
-                marginTop: 32,
+                ...styles.createPostSection,
                 marginBottom: isShowKeyboard ? -55 : 22,
               }}
             >
               <TouchableOpacity activeOpacity={0.6} onPress={updatePhoto}>
-                <View
-                  style={{
-                    width: "100%",
-                    height: 240,
-                    borderRadius: 8,
-                    backgroundColor: "rgba(246, 246, 246, 1)",
-                    borderWidth: 1,
-                    borderColor: "rgba(232, 232, 232, 1)",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <View style={styles.photoContainer}>
                   {photo && (
-                    <View
-                      style={{
-                        flex: 1,
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Image
-                        source={{ uri: photo }}
-                        style={{
-                          flex: 1,
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: 8,
-                        }}
-                      />
+                    <View style={styles.isPhotoContainer}>
+                      <Image source={{ uri: photo }} style={styles.photoImg} />
                     </View>
                   )}
                   <View
                     style={{
-                      width: 60,
-                      height: 60,
-                      backgroundColor: "#fff",
-                      borderRadius: 30,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      ...styles.cameraIconContainer,
                       opacity: photo ? 0.3 : 0.8,
                     }}
                   >
@@ -245,7 +203,7 @@ const CreatePostsScreen = ({ navigation }) => {
                     />
                   </View>
                 </View>
-                <Text style={{ color: "rgba(189, 189, 189, 1)", fontSize: 16 }}>
+                <Text style={styles.photoDescription}>
                   {photo ? "Редагувати фото" : "Завантажте фото"}
                 </Text>
               </TouchableOpacity>
@@ -256,22 +214,14 @@ const CreatePostsScreen = ({ navigation }) => {
                 placeholder="Назва..."
                 onChangeText={(value) => setPostName(value)}
                 value={postName}
-                style={{
-                  height: 50,
-                  marginTop: 32,
-                  fontSize: 16,
-                  borderBottomColor: "rgba(232, 232, 232, 1)",
-                  borderBottomWidth: 1,
-                  paddingTop: 15,
-                  paddingBottom: 15,
-                }}
+                style={styles.nameOfPhoto}
               />
               <View style={{ paddingLeft: 30 }}>
                 <Feather
                   name="map-pin"
                   size={24}
                   color="rgba(189, 189, 189, 1)"
-                  style={{ position: "absolute", top: 30, width: 24 }}
+                  style={styles.iconMap}
                 />
 
                 <TextInput
@@ -281,32 +231,18 @@ const CreatePostsScreen = ({ navigation }) => {
                   placeholder="Місцевість..."
                   onChangeText={(value) => setPostLocation(value)}
                   value={postLocation}
-                  style={{
-                    height: 50,
-                    marginTop: 16,
-                    fontSize: 16,
-                    borderBottomColor: "rgba(232, 232, 232, 1)",
-                    borderBottomWidth: 1,
-                    paddingTop: 15,
-                    paddingBottom: 15,
-                    paddingLeft: 30,
-                  }}
+                  style={styles.nameLocationOfPhoto}
                 />
               </View>
               <TouchableOpacity
                 onPress={sendPost}
                 activeOpacity={1}
                 style={{
-                  width: 343,
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 100,
+                  ...styles.btnCreatePost,
                   backgroundColor:
                     photo && postLocation && postName
                       ? "rgba(255, 108, 0, 1)"
                       : "#F6F6F6",
-                  marginTop: 32,
                 }}
               >
                 <Text
@@ -323,17 +259,7 @@ const CreatePostsScreen = ({ navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={resetCreatePost}
-                style={{
-                  width: 70,
-                  height: 40,
-                  borderRadius: 20,
-                  marginTop: 120,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#F6F6F6",
-                  marginRight: "auto",
-                  marginLeft: "auto",
-                }}
+                style={styles.btnResetPost}
               >
                 <Feather
                   name="trash-2"
@@ -348,5 +274,101 @@ const CreatePostsScreen = ({ navigation }) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  cameraContainer: { flex: 1 },
+  camera: { flex: 1, alignItems: "center", justifyContent: "flex-end" },
+  btnCamera: {
+    borderColor: "#fff",
+    borderRadius: 35,
+    width: 70,
+    height: 70,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 40,
+  },
+  createPostContainer: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(33, 33, 33, 0.8)",
+    justifyContent: "flex-end",
+  },
+  createPostSection: {
+    marginHorizontal: 16,
+    marginTop: 32,
+  },
+  photoContainer: {
+    width: "100%",
+    height: 240,
+    borderRadius: 8,
+    backgroundColor: "rgba(246, 246, 246, 1)",
+    borderWidth: 1,
+    borderColor: "rgba(232, 232, 232, 1)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  isPhotoContainer: {
+    flex: 1,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+  photoImg: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
+  },
+  cameraIconContainer: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  photoDescription: { color: "rgba(189, 189, 189, 1)", fontSize: 16 },
+  nameOfPhoto: {
+    height: 50,
+    marginTop: 32,
+    fontSize: 16,
+    borderBottomColor: "rgba(232, 232, 232, 1)",
+    borderBottomWidth: 1,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  iconMap: { position: "absolute", top: 30, width: 24 },
+  nameLocationOfPhoto: {
+    height: 50,
+    marginTop: 16,
+    fontSize: 16,
+    borderBottomColor: "rgba(232, 232, 232, 1)",
+    borderBottomWidth: 1,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  btnCreatePost: {
+    width: 343,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    marginTop: 32,
+  },
+  btnResetPost: {
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    marginTop: 120,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F6F6F6",
+    marginRight: "auto",
+    marginLeft: "auto",
+  },
+});
 
 export default CreatePostsScreen;
