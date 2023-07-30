@@ -17,9 +17,10 @@ const ListEmptyComponent = ({ navigation, text }) => {
 
 const styles = StyleSheet.create({
   emptyListContainer: {
-    marginHorizontal: 16,
-    marginTop: 30,
+    paddingHorizontal: 16,
+    paddingTop: 30,
     alignItems: "center",
+    backgroundColor: "#fff",
   },
   emptyListText: { fontSize: 20 },
   createPostBtn: {

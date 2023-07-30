@@ -1,7 +1,7 @@
 import { Image, View } from "react-native";
 import UserPhoto from "../../../assets/UserPhoto.jpg";
 import Comments from "../../../assets/icons/message-circle.jpg";
-
+import Comments__orange from "../../../assets/icons/message-circle-orange.jpg";
 import { Text } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAllPosts } from "../../redux/posts/selectors";
 
-const PostItem = ({ obj, navigation, userDetails }) => {
+const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   const [lengthPosts, setLengthPosts] = useState(0);
 
   const allPosts = useSelector(selectAllPosts);
@@ -35,7 +35,13 @@ const PostItem = ({ obj, navigation, userDetails }) => {
       }}
     >
       {userDetails && (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 32,
+          }}
+        >
           <Image source={UserPhoto} />
           <View style={{ marginLeft: 8 }}>
             <Text style={{ fontSize: 13 }}>{data.userName}</Text>
@@ -45,18 +51,15 @@ const PostItem = ({ obj, navigation, userDetails }) => {
           </View>
         </View>
       )}
-      <TouchableOpacity activeOpacity={0.6}>
-        <Image
-          src={data.photoUrl}
-          style={{
-            width: "100%",
-            height: 240,
-            borderRadius: 8,
-            marginTop: 32,
-          }}
-        />
-        <Text style={{ fontSize: 16, marginTop: 8 }}>{data.postName}</Text>
-      </TouchableOpacity>
+      <Image
+        src={data.photoUrl}
+        style={{
+          width: "100%",
+          height: 240,
+          borderRadius: 8,
+        }}
+      />
+      <Text style={{ fontSize: 16, marginTop: 8 }}>{data.postName}</Text>
       <View
         style={{
           flexDirection: "row",
@@ -70,7 +73,14 @@ const PostItem = ({ obj, navigation, userDetails }) => {
             handlePostComments(item.id, data.photoUrl);
           }}
         >
-          <Image style={{ width: 24, height: 24 }} source={Comments} />
+          {isProfileScreen ? (
+            <Image
+              style={{ width: 24, height: 24 }}
+              source={Comments__orange}
+            />
+          ) : (
+            <Image style={{ width: 24, height: 24 }} source={Comments} />
+          )}
           <Text
             style={{
               fontSize: 16,

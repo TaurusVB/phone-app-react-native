@@ -43,44 +43,34 @@ const ProfileScreen = ({ navigation }) => {
         source={PhotoBG}
         style={styles.imageBG}
       ></ImageBackground>
-      <View>
-        <FlatList
-          ListEmptyComponent={
-            <ListEmptyComponent
-              navigation={navigation}
-              text="Тут ще немає твоїх публікацій, але ти можеш створити їх, натиснувши на:"
-            />
-          }
-          ListHeaderComponent={
-            <View style={styles.containerScreen}>
-              <View style={styles.formContainer}>
-                <View style={styles.containerUserPhoto}>
-                  <Image source={UserPhoto} style={styles.userPhoto} />
-                  <View style={styles.containerIcon}>
-                    <EvilIcons
-                      name="close"
-                      size={25}
-                      color="rgba(232, 232, 232, 1)"
-                    />
-                  </View>
-                </View>
-                <TouchableOpacity
-                  onPress={handleLogOut}
-                  style={styles.logOutBtn}
-                >
-                  <Feather name="log-out" size={24} color="#BDBDBD" />
-                </TouchableOpacity>
+      <View style={styles.containerScreen}>
+        <View style={styles.containerUserPhoto}>
+          <Image source={UserPhoto} style={styles.userPhoto} />
+          <View style={styles.containerIcon}>
+            <EvilIcons name="close" size={25} color="rgba(232, 232, 232, 1)" />
+          </View>
+        </View>
+        <TouchableOpacity onPress={handleLogOut} style={styles.logOutBtn}>
+          <Feather name="log-out" size={24} color="#BDBDBD" />
+        </TouchableOpacity>
 
-                <Text style={styles.displayName}>{userNickname}</Text>
-              </View>
-            </View>
-          }
-          data={userPosts}
-          style={{}}
-          keyExtractor={() => uuid.v4()}
-          renderItem={(obj) => <PostItem obj={obj} navigation={navigation} />}
-        />
+        <Text style={styles.displayName}>{userNickname}</Text>
       </View>
+      <FlatList
+        ListEmptyComponent={
+          <ListEmptyComponent
+            navigation={navigation}
+            text="Тут ще немає твоїх публікацій, але ти можеш створити їх, натиснувши на:"
+          />
+        }
+        ListHeaderComponentStyle={{}}
+        data={userPosts}
+        style={{ backgroundColor: "#fff" }}
+        keyExtractor={() => uuid.v4()}
+        renderItem={(obj) => (
+          <PostItem obj={obj} navigation={navigation} isProfileScreen />
+        )}
+      />
     </View>
   );
 };
@@ -99,8 +89,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 26,
     marginTop: 103,
     backgroundColor: "#fff",
-  },
-  formContainer: {
     alignItems: "center",
     width: "100%",
   },
