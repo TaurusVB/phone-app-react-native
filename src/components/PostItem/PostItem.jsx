@@ -27,21 +27,12 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   return (
     <View
       style={{
-        paddingTop: 32,
-        flex: 1,
-        paddingHorizontal: 16,
+        ...styles.itemContainer,
         paddingBottom: lengthPosts === obj.index ? 32 : 0,
-        backgroundColor: "#fff",
       }}
     >
       {userDetails && (
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 32,
-          }}
-        >
+        <View style={styles.userDetailsContainer}>
           <Image source={UserPhoto} />
           <View style={{ marginLeft: 8 }}>
             <Text style={{ fontSize: 13 }}>{data.userName}</Text>
@@ -51,22 +42,9 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
           </View>
         </View>
       )}
-      <Image
-        src={data.photoUrl}
-        style={{
-          width: "100%",
-          height: 240,
-          borderRadius: 8,
-        }}
-      />
-      <Text style={{ fontSize: 16, marginTop: 8 }}>{data.postName}</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 8,
-        }}
-      >
+      <Image src={data.photoUrl} style={styles.photoImg} />
+      <Text style={styles.nameOfPost}>{data.postName}</Text>
+      <View style={styles.commentsAndLocationContainer}>
         <TouchableOpacity
           style={{ flexDirection: "row" }}
           onPress={() => {
@@ -74,22 +52,11 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
           }}
         >
           {isProfileScreen ? (
-            <Image
-              style={{ width: 24, height: 24 }}
-              source={Comments__orange}
-            />
+            <Image style={styles.commentIcon} source={Comments__orange} />
           ) : (
-            <Image style={{ width: 24, height: 24 }} source={Comments} />
+            <Image style={styles.commentIcon} source={Comments} />
           )}
-          <Text
-            style={{
-              fontSize: 16,
-              color: "rgba(189, 189, 189, 1)",
-              marginLeft: 6,
-            }}
-          >
-            comments
-          </Text>
+          <Text style={styles.textComment}>comments</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ flexDirection: "row" }}
@@ -106,15 +73,43 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
             color="rgba(189, 189, 189, 1)"
             style={{}}
           />
-          <Text style={{ fontSize: 16, marginLeft: 4 }}>
-            {data.postLocation}
-          </Text>
+          <Text style={styles.textLocation}>{data.postLocation}</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  itemContainer: {
+    paddingTop: 32,
+    flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: "#fff",
+  },
+  userDetailsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  photoImg: {
+    width: "100%",
+    height: 240,
+    borderRadius: 8,
+  },
+  commentsAndLocationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  nameOfPost: { fontSize: 16, marginTop: 8 },
+  commentIcon: { width: 24, height: 24 },
+  textComment: {
+    fontSize: 16,
+    color: "rgba(189, 189, 189, 1)",
+    marginLeft: 6,
+  },
+  textLocation: { fontSize: 16, marginLeft: 4 },
+});
 
 export default PostItem;
