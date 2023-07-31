@@ -16,7 +16,6 @@ const registerDB = createAsyncThunk(
     try {
       const { login, email, password, photoURL } = credentials;
       const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(user);
       await updateProfile(auth.currentUser, { displayName: login, photoURL });
       return auth.currentUser;
     } catch (error) {
@@ -79,12 +78,32 @@ const uploadPhotoToStorage = createAsyncThunk(
 
       const storageRef = ref(storage, "images/" + uniqId);
       await uploadBytesResumable(storageRef, blob, metadata);
+      const photo = await getDownloadURL(storageRef);
 
-      return await getDownloadURL(storageRef);
+      return photo;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-export { registerDB, loginDB, logOut, authStateChanged, uploadPhotoToStorage };
+const updateAvatar = createAsyncThunk(
+  "auth/updateAvatar",
+  async (photoURL, thunkAPI) => {
+    try {
+      await updateProfile(auth.currentUser, { photoURL });
+      return auth.currentUser;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export {
+  registerDB,
+  loginDB,
+  logOut,
+  authStateChanged,
+  uploadPhotoToStorage,
+  updateAvatar,
+};

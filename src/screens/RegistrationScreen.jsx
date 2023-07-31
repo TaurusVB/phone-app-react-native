@@ -28,15 +28,13 @@ const RegistrationScreen = () => {
   const [email, setEmail] = useState("");
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [validationLoginErr, setValidationLoginErr] = useState("");
-  const [validationPasswordErr, setValidationPasswordErr] = useState("");
-  const [validationEmailErr, setValidationEmailErr] = useState("");
+  const [validationErr, setValidationErr] = useState("");
+
   const [isShownPassword, setIsShownPassword] = useState(true);
   const [userAvatar, setUserAvatar] = useState(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const userAvatarFromState = useSelector(selectUserAvatar);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -59,53 +57,31 @@ const RegistrationScreen = () => {
     };
   }, []);
 
-  useEffect(() => {
-    dispatch(uploadPhotoToStorage(userAvatar));
-  }, [userAvatar]);
-
-  const validateLogin = () => {
-    if (login.length < 6) {
-      setValidationLoginErr("Login should be at least 6 characters");
-      alert("Login should be at least 6 characters");
-    } else {
-      setValidationLoginErr("");
+  const isValidateUserData = () => {
+    if (!userAvatar) {
+      setValidationErr("Виберіть собі аватар з галереї!");
+      alert("Виберіть собі аватар з галереї!");
+      return;
     }
-  };
-
-  const validateEmail = () => {
+    if (login.length < 6) {
+      setValidationErr("Login should be at least 6 characters");
+      alert("Login should be at least 6 characters");
+      return;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setValidationEmailErr("Invalid email");
+      setValidationErr("Invalid email");
       alert("Invalid email: it must contain @ and domain part, invalid space");
-    } else {
-      setValidationEmailErr("");
+      return;
     }
-  };
-
-  const validatePassword = () => {
     if (password.length < 8) {
-      setValidationPasswordErr("Password should be at least 8 characters");
+      setValidationErr("Password should be at least 8 characters");
       alert("Password should be at least 8 characters");
-    } else {
-      setValidationPasswordErr("");
+      return;
     }
-  };
 
-  const isValidateData = () => {
-    validateLogin();
-    validateEmail();
-    validatePassword();
-    if (
-      !validationEmailErr &&
-      !validationPasswordErr &&
-      !validationLoginErr &&
-      email &&
-      password
-    ) {
-      handleSignIn();
-      return true;
-    }
-    return false;
+    setValidationErr("");
+    handleSignIn();
   };
 
   const keyboardHide = () => {
@@ -117,9 +93,11 @@ const RegistrationScreen = () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
 
-    dispatch(
-      registerDB({ login, email, password, photoURL: userAvatarFromState })
-    );
+    const downloadUrl = await dispatch(
+      uploadPhotoToStorage(userAvatar)
+    ).unwrap();
+
+    dispatch(registerDB({ login, email, password, photoURL: downloadUrl }));
     setEmail("");
     setLogin("");
     setPassword("");
@@ -220,7 +198,7 @@ const RegistrationScreen = () => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegistration}
-                  onPress={isValidateData}
+                  onPress={isValidateUserData}
                 >
                   <Text style={styles.textRegistration}>Зареєстуватися</Text>
                 </TouchableOpacity>

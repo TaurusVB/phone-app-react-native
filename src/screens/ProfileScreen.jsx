@@ -1,16 +1,18 @@
 import { FlatList, StyleSheet } from "react-native";
 import { Text, View } from "react-native";
 import PhotoBG from "../../assets/PhotoBG.jpg";
-import UserPhoto from "../../assets/UserPhoto.jpg";
-import Comments from "../../assets/icons/message-circle.jpg";
 import { EvilIcons, Feather } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { db } from "../../config";
+import { auth, db } from "../../config";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getCurrentUserPosts } from "../redux/posts/operations";
-import { selectUserId, selectUserNickname } from "../redux/auth/selectors";
+import {
+  selectUserAvatar,
+  selectUserId,
+  selectUserNickname,
+} from "../redux/auth/selectors";
 import { selectUserPosts } from "../redux/posts/selectors";
 import { Image } from "react-native";
 import uuid from "react-native-uuid";
@@ -24,6 +26,8 @@ const ProfileScreen = ({ navigation }) => {
   const userId = useSelector(selectUserId);
   const userPosts = useSelector(selectUserPosts);
   const userNickname = useSelector(selectUserNickname);
+
+  const userAvatarFromState = useSelector(selectUserAvatar);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "posts"), () => {
@@ -45,7 +49,10 @@ const ProfileScreen = ({ navigation }) => {
       ></ImageBackground>
       <View style={styles.containerScreen}>
         <View style={styles.containerUserPhoto}>
-          <Image source={UserPhoto} style={styles.userPhoto} />
+          <Image
+            source={{ uri: userAvatarFromState }}
+            style={styles.userPhoto}
+          />
           <View style={styles.containerIcon}>
             <EvilIcons name="close" size={25} color="rgba(232, 232, 232, 1)" />
           </View>
@@ -101,12 +108,7 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -60 }, { translateY: -60 }],
   },
-  userPhoto: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    resizeMode: "contain",
-  },
+  userPhoto: { height: "100%", width: "100%", borderRadius: 16 },
   containerIcon: {
     position: "absolute",
     right: -12.5,

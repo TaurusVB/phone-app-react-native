@@ -5,11 +5,20 @@ import {
   logOut,
   authStateChanged,
   uploadPhotoToStorage,
+  updateAvatar,
 } from "./operations";
 
 const initialState = {
   user: { userId: null, nickname: null, email: "", photoURL: null },
   isLoggedIn: false,
+};
+
+const successfulLogin = (state, action) => {
+  state.user.userId = action.payload.uid;
+  state.user.nickname = action.payload.displayName;
+  state.user.email = action.payload.email;
+  state.user.photoURL = action.payload.photoURL;
+  state.isLoggedIn = true;
 };
 
 const authSlice = createSlice({
@@ -18,27 +27,25 @@ const authSlice = createSlice({
 
   extraReducers: {
     [registerDB.fulfilled](state, action) {
-      state.user.userId = action.payload.uid;
-      state.user.nickname = action.payload.displayName;
-      state.isLoggedIn = true;
+      successfulLogin(state, action);
     },
     [loginDB.fulfilled](state, action) {
-      state.user.userId = action.payload.uid;
-      state.user.nickname = action.payload.displayName;
-      state.isLoggedIn = true;
-    },
-    [logOut.fulfilled](state) {
-      state.user = { userId: null, nickname: null };
-      state.isLoggedIn = false;
+      successfulLogin(state, action);
     },
     [authStateChanged.fulfilled](state, action) {
-      state.user.userId = action.payload.uid;
-      state.user.nickname = action.payload.displayName;
-      state.isLoggedIn = true;
+      successfulLogin(state, action);
+    },
+    [logOut.fulfilled](state) {
+      state.user = { userId: null, nickname: null, email: "", photoURL: null };
+      state.isLoggedIn = false;
     },
     [uploadPhotoToStorage.fulfilled](state, action) {
       state.user.photoURL = action.payload;
     },
+    [updateAvatar.fulfilled](state, action) {
+      state.user.photoURL = action.payload.photoURL;
+    },
+
     // updateUser: {
     //   reducer(state, { payload }) {
     //     return { ...state, ...payload };
