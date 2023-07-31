@@ -17,7 +17,7 @@ const firebaseConfig = {
   storageBucket: "photomap-4b251.appspot.com",
   messagingSenderId: "605551994185",
   appId: "1:605551994185:web:3f04d5a94f457f40e7e698",
-  measurementId: "G-8HJK487CRG",
+  measurementId: "G-8HJK487CRG"
 };
 
 // Initialize Firebase

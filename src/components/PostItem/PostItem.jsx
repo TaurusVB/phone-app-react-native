@@ -7,13 +7,20 @@ import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAllPosts } from "../../redux/posts/selectors";
+import { getCurrentAvatarOfUser } from "../../redux/posts/operations";
 
 const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   const [lengthPosts, setLengthPosts] = useState(0);
 
+  const dispatch = useDispatch();
+
   const allPosts = useSelector(selectAllPosts);
+
+  useEffect(() => {
+    // dispatch(getCurrentAvatarOfUser(obj.item.userId));
+  }, []);
 
   useEffect(() => {
     setLengthPosts(allPosts.length - 1);

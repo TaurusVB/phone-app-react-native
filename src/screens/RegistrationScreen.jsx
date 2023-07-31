@@ -11,11 +11,17 @@ import {
   Keyboard,
 } from "react-native";
 import PhotoBG from "../../assets/PhotoBG.jpg";
-import addPhoto from "../../assets/addPhotoBtn.jpg";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { registerDB } from "../redux/auth/operations";
-import { useDispatch } from "react-redux";
+import { registerDB, uploadPhotoToStorage } from "../redux/auth/operations";
+import { useDispatch, useSelector } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
+import { AntDesign } from "@expo/vector-icons";
+import uuid from "react-native-uuid";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../config";
+import { writeUserAvatarToFirebase } from "../redux/posts/operations";
+import { selectUserAvatar } from "../redux/auth/selectors";
 
 const RegistrationScreen = () => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -26,9 +32,11 @@ const RegistrationScreen = () => {
   const [validationPasswordErr, setValidationPasswordErr] = useState("");
   const [validationEmailErr, setValidationEmailErr] = useState("");
   const [isShownPassword, setIsShownPassword] = useState(true);
+  const [userAvatar, setUserAvatar] = useState(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const userAvatarFromState = useSelector(selectUserAvatar);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -50,6 +58,10 @@ const RegistrationScreen = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(uploadPhotoToStorage(userAvatar));
+  }, [userAvatar]);
 
   const validateLogin = () => {
     if (login.length < 6) {
@@ -101,13 +113,29 @@ const RegistrationScreen = () => {
     Keyboard.dismiss();
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     setShowKeyboard(false);
     Keyboard.dismiss();
-    dispatch(registerDB({ login, email, password }));
+
+    dispatch(
+      registerDB({ login, email, password, photoURL: userAvatarFromState })
+    );
     setEmail("");
     setLogin("");
     setPassword("");
+  };
+
+  const changeUserAvatar = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setUserAvatar(result.assets[0].uri);
+    }
   };
 
   return (
@@ -124,9 +152,31 @@ const RegistrationScreen = () => {
                   marginBottom: isShowKeyboard ? 20 : 78,
                 }}
               >
-                <View style={styles.userPhoto}>
-                  <Image style={styles.addPhotoImg} source={addPhoto}></Image>
-                </View>
+                <TouchableOpacity
+                  style={styles.userPhoto}
+                  onPress={changeUserAvatar}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    style={{ height: "100%", width: "100%", borderRadius: 16 }}
+                    source={{ uri: userAvatar }}
+                  />
+                  {!userAvatar ? (
+                    <AntDesign
+                      name="pluscircleo"
+                      size={24}
+                      color="rgba(255, 108, 0, 1)"
+                      style={styles.addPhotoImg}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="closecircleo"
+                      size={24}
+                      color="rgba(232, 232, 232, 1)"
+                      style={styles.addPhotoImg}
+                    />
+                  )}
+                </TouchableOpacity>
                 <Text style={styles.titleForm}>Реєстрація</Text>
                 <View>
                   <TextInput

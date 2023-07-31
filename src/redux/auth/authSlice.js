@@ -1,8 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { registerDB, loginDB, logOut, authStateChanged } from "./operations";
+import {
+  registerDB,
+  loginDB,
+  logOut,
+  authStateChanged,
+  uploadPhotoToStorage,
+} from "./operations";
 
 const initialState = {
-  user: { userId: null, nickname: null, email: '' },
+  user: { userId: null, nickname: null, email: "", photoURL: null },
   isLoggedIn: false,
 };
 
@@ -29,6 +35,9 @@ const authSlice = createSlice({
       state.user.userId = action.payload.uid;
       state.user.nickname = action.payload.displayName;
       state.isLoggedIn = true;
+    },
+    [uploadPhotoToStorage.fulfilled](state, action) {
+      state.user.photoURL = action.payload;
     },
     // updateUser: {
     //   reducer(state, { payload }) {

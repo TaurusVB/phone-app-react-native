@@ -5,6 +5,7 @@ import {
   writeCommentToFirestore,
   getCommentsFromFirestore,
   getCurrentUserPosts,
+  getCurrentAvatarOfUser,
 } from "./operations";
 
 const initialState = { postsList: [], comments: [], userPostsList: [] };
@@ -24,6 +25,7 @@ const postsSlice = createSlice({
     [getCurrentUserPosts.fulfilled](state, action) {
       state.userPostsList = action.payload;
     },
+    getCurrentAvatarOfUser,
   },
 });
 

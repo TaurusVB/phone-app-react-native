@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Text, View } from "react-native";
-import CameraIcon from "../../assets/icons/camera.jpg";
 import { Feather } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { Keyboard } from "react-native";
@@ -62,7 +61,6 @@ const CreatePostsScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    // Виконується, коли екран стає активним (отримує фокус)
     if (isFocused) {
       setIsDoPhoto(!isFocused);
     }
@@ -105,7 +103,7 @@ const CreatePostsScreen = ({ navigation }) => {
     resetCreatePost();
   };
 
-  const uploadPhotoToserver = async () => {
+  const uploadPhotoToServer = async () => {
     const metadata = {
       contentType: "image/jpeg",
     };
@@ -121,7 +119,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const uploadPostToServer = async () => {
-    const photo = await uploadPhotoToserver();
+    const photo = await uploadPhotoToServer();
 
     dispatch(
       writeDataToFirestore({

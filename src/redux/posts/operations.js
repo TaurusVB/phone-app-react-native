@@ -5,9 +5,14 @@ import {
   updateDoc,
   where,
   query,
+  getFirestore,
+  doc,
 } from "firebase/firestore";
-import { db } from "../../../config";
+import firebase from "firebase/app";
+import { auth, db, storage } from "../../../config";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { getAuth, getUserById } from "firebase/auth";
+
 
 const writeDataToFirestore = createAsyncThunk(
   "posts/addPost",
@@ -86,6 +91,39 @@ const getCurrentUserPosts = createAsyncThunk(
   }
 );
 
+const writeUserAvatarToFirebase = createAsyncThunk(
+  "posts/addUserAvatar",
+  async (credentials, thunkAPI) => {
+    try {
+      const { postId, userAvatar } = credentials;
+      await addDoc(collection(db, `posts/${postId}/usersAvatars`), userAvatar);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+const getUserAvatarFromFireBase = createAsyncThunk(
+  "posts/getUserAvatar",
+  async (credentials, thunkAPI) => {
+    try {
+      const { postId } = credentials;
+      const snapshot = await getDocs(
+        collection(db, `posts/${postId}/usersAvatars`)
+      );
+      const response = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
 // const updateDataInFirestore = createAsyncThunk(
 //   "posts/updatePost",
 //   async (credentials, thunkAPI) => {
@@ -108,4 +146,6 @@ export {
   writeCommentToFirestore,
   getCommentsFromFirestore,
   getCurrentUserPosts,
+  writeUserAvatarToFirebase,
+  getUserAvatarFromFireBase,
 };
