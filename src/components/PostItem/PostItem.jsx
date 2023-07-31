@@ -40,7 +40,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
     >
       {userDetails && (
         <View style={styles.userDetailsContainer}>
-          <Image source={UserPhoto} />
+          <Image style={styles.avatarImg} source={{ uri: data.avatarUser }} />
           <View style={{ marginLeft: 8 }}>
             <Text style={{ fontSize: 13 }}>{data.userName}</Text>
             <Text style={{ fontSize: 11, color: "rgba(33, 33, 33, 0.8)" }}>
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   textLocation: { fontSize: 16, marginLeft: 4 },
+  avatarImg: { width: 60, height: 60, borderRadius: 16 },
 });
 
 export default PostItem;

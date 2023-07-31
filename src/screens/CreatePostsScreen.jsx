@@ -130,6 +130,7 @@ const CreatePostsScreen = ({ navigation }) => {
         photoUrl: photo,
         location: locationParams,
         email: auth.currentUser.email,
+        avatarUser: auth.currentUser.photoURL,
       })
     );
   };

@@ -21,10 +21,6 @@ const DefaultPostsScreen = ({ navigation }) => {
     return () => unsubscribe();
   }, []);
 
-  const handlePostComments = (postId, photoUrl) => {
-    navigation.navigate("CommentsPost", { postId, photoUrl });
-  };
-
   return (
     <View
       style={{

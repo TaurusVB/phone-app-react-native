@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet } from "react-native";
 import { Text, View } from "react-native";
 import PhotoBG from "../../assets/PhotoBG.jpg";
-import { EvilIcons, Feather } from "@expo/vector-icons";
+import { AntDesign, EvilIcons, Feather } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +13,16 @@ import {
   selectUserId,
   selectUserNickname,
 } from "../redux/auth/selectors";
+import * as ImagePicker from "expo-image-picker";
 import { selectUserPosts } from "../redux/posts/selectors";
 import { Image } from "react-native";
 import uuid from "react-native-uuid";
 import { TouchableOpacity } from "react-native";
-import { logOut } from "../redux/auth/operations";
+import {
+  logOut,
+  updateAvatar,
+  uploadPhotoToStorage,
+} from "../redux/auth/operations";
 import ListEmptyComponent from "../components/ListEmptyComponent/ListEmptyComponent";
 import PostItem from "../components/PostItem/PostItem";
 
@@ -41,6 +46,22 @@ const ProfileScreen = ({ navigation }) => {
     dispatch(logOut());
   };
 
+  const changeUserAvatar = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const downloadUrl = await dispatch(
+        uploadPhotoToStorage(result.assets[0].uri)
+      ).unwrap();
+      dispatch(updateAvatar(downloadUrl));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -48,15 +69,36 @@ const ProfileScreen = ({ navigation }) => {
         style={styles.imageBG}
       ></ImageBackground>
       <View style={styles.containerScreen}>
-        <View style={styles.containerUserPhoto}>
+        <TouchableOpacity
+          style={styles.containerUserPhoto}
+          onPress={changeUserAvatar}
+          activeOpacity={0.8}
+        >
           <Image
-            source={{ uri: userAvatarFromState }}
             style={styles.userPhoto}
+            source={{ uri: userAvatarFromState }}
           />
-          <View style={styles.containerIcon}>
-            <EvilIcons name="close" size={25} color="rgba(232, 232, 232, 1)" />
-          </View>
-        </View>
+          {!userAvatarFromState ? (
+            <View style={styles.containerIcon}>
+              <AntDesign
+                name="pluscircleo"
+                size={24}
+                color="rgba(255, 108, 0, 1)"
+                style={styles.addPhotoImg}
+              />
+            </View>
+          ) : (
+            <View style={styles.containerIcon}>
+              <AntDesign
+                name="closecircleo"
+                size={24}
+                color="rgba(232, 232, 232, 1)"
+                style={styles.addPhotoImg}
+              />
+            </View>
+          )}
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={handleLogOut} style={styles.logOutBtn}>
           <Feather name="log-out" size={24} color="#BDBDBD" />
         </TouchableOpacity>

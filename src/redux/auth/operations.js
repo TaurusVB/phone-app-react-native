@@ -5,10 +5,17 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth, storage } from "../../../config";
+import { auth, db, storage } from "../../../config";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import uuid from "react-native-uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
 const registerDB = createAsyncThunk(
   "auth/register",
@@ -92,6 +99,16 @@ const updateAvatar = createAsyncThunk(
   async (photoURL, thunkAPI) => {
     try {
       await updateProfile(auth.currentUser, { photoURL });
+
+      const q = query(
+        collection(db, "posts"),
+        where("userId", "==", auth.currentUser.uid)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        const postRef = doc.ref;
+        await updateDoc(postRef, { avatarUser: photoURL });
+      });
       return auth.currentUser;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
