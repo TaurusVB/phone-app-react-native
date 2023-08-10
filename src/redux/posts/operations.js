@@ -1,18 +1,6 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  where,
-  query,
-  getFirestore,
-  doc,
-} from "firebase/firestore";
-import firebase from "firebase/app";
-import { auth, db, storage } from "../../../config";
+import { collection, addDoc, getDocs, where, query } from "firebase/firestore";
+import { db } from "../../../config";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getAuth, getUserById } from "firebase/auth";
-
 
 const writeDataToFirestore = createAsyncThunk(
   "posts/addPost",
@@ -121,24 +109,6 @@ const getUserAvatarFromFireBase = createAsyncThunk(
     }
   }
 );
-
-
-
-// const updateDataInFirestore = createAsyncThunk(
-//   "posts/updatePost",
-//   async (credentials, thunkAPI) => {
-//     try {
-//       const { docId } = credentials;
-//       const ref = doc(db, "posts", docId);
-
-//       await updateDoc(ref, {
-//         age: 25,
-//       });
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.message);
-//     }
-//   }
-// );
 
 export {
   writeDataToFirestore,

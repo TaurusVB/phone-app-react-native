@@ -58,7 +58,7 @@ const ProfileScreen = ({ navigation }) => {
       const downloadUrl = await dispatch(
         uploadPhotoToStorage(result.assets[0].uri)
       ).unwrap();
-      dispatch(updateAvatar(downloadUrl));
+      dispatch(updateAvatar({ photoURL: downloadUrl, posts: userPosts }));
     }
   };
 

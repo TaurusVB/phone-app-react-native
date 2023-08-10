@@ -22,7 +22,7 @@ const registerDB = createAsyncThunk(
   async (credentials, thunkAPI) => {
     try {
       const { login, email, password, photoURL } = credentials;
-      const user = await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, { displayName: login, photoURL });
       return auth.currentUser;
     } catch (error) {
@@ -96,19 +96,35 @@ const uploadPhotoToStorage = createAsyncThunk(
 
 const updateAvatar = createAsyncThunk(
   "auth/updateAvatar",
-  async (photoURL, thunkAPI) => {
+  async (credentials, thunkAPI) => {
     try {
+      const { photoURL, posts } = credentials;
+
       await updateProfile(auth.currentUser, { photoURL });
 
-      const q = query(
+      const userPosts = query(
         collection(db, "posts"),
         where("userId", "==", auth.currentUser.uid)
       );
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(userPosts);
       querySnapshot.forEach(async (doc) => {
         const postRef = doc.ref;
         await updateDoc(postRef, { avatarUser: photoURL });
       });
+
+      posts.forEach(async (item) => {
+        const userComments = query(
+          collection(db, `posts/${item.id}/comments`),
+          where("userId", "==", auth.currentUser.uid)
+        );
+        const userCommentsSnapshot = await getDocs(userComments);
+
+        userCommentsSnapshot.forEach(async (doc) => {
+          const postRef = doc.ref;
+          await updateDoc(postRef, { avatarPhoto: photoURL });
+        });
+      });
+
       return auth.currentUser;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

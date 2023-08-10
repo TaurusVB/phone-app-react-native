@@ -45,30 +45,6 @@ const authSlice = createSlice({
     [updateAvatar.fulfilled](state, action) {
       state.user.photoURL = action.payload.photoURL;
     },
-
-    // updateUser: {
-    //   reducer(state, { payload }) {
-    //     return { ...state, ...payload };
-    //   },
-    //   prepare(data) {
-    //     return {
-    //       user: { userId: data.uid, nickname: data.displayName },
-    //       token: data.accessToken,
-    //       isLoggedIn: true,
-    //     };
-    //   },
-    // },
-    // [refreshUser.pending](state) {
-    //   state.isRefreshing = true;
-    // },
-    // [refreshUser.fulfilled](state, action) {
-    //   state.user = action.payload;
-    //   state.isLoggedIn = true;
-    //   state.isRefreshing = false;
-    // },
-    // [refreshUser.rejected](state) {
-    //   state.isRefreshing = false;
-    // },
   },
 });
 

@@ -13,14 +13,14 @@ import {
 import uuid from "react-native-uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/auth/selectors";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { uk } from "date-fns/locale";
 import {
   getCommentsFromFirestore,
   writeCommentToFirestore,
 } from "../../redux/posts/operations";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "../../../config";
+import { auth, db } from "../../../config";
 import { selectComments } from "../../redux/posts/selectors";
 import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native";
@@ -29,6 +29,7 @@ import { ScrollView } from "react-native";
 const CommentsScreen = ({ route }) => {
   const [commentText, setCommentText] = useState("");
   const [isShowKeyboard, setShowKeyboard] = useState(false);
+  const [sortedCommentsByDate, setSortedCommentsByDate] = useState([]);
 
   const { postId, photoUrl } = route.params;
   const { nickname } = useSelector(selectUser);
@@ -64,6 +65,10 @@ const CommentsScreen = ({ route }) => {
     };
   }, []);
 
+  useEffect(() => {
+    sortedComments(comments);
+  }, [comments]);
+
   const leaveComment = () => {
     const commentLeaveDate = format(
       new Date(Date.now()),
@@ -84,6 +89,8 @@ const CommentsScreen = ({ route }) => {
           commentText,
           commentLeaveDate,
           nickname,
+          userId: auth.currentUser.uid,
+          avatarPhoto: auth.currentUser.photoURL,
         },
       })
     );
@@ -93,35 +100,50 @@ const CommentsScreen = ({ route }) => {
   };
 
   const renderItem = ({ item: { data } }) => {
+    const isUserComment = auth.currentUser.uid === data.userId;
     return (
       <View
         style={{
+          width: "100%",
           marginTop: 24,
           display: "flex",
-          flexDirection: "row",
+          flexDirection: isUserComment ? "row-reverse" : "row",
         }}
       >
-        <View
-          style={{
-            width: 28,
-            height: 28,
-            backgroundColor: "black",
-            borderRadius: 14,
-            marginRight: 16,
-          }}
-        ></View>
+        <Image
+          style={[
+            {
+              width: 28,
+              height: 28,
+              backgroundColor: "black",
+              borderRadius: 14,
+            },
+            isUserComment ? { marginLeft: 16 } : { marginRight: 16 },
+          ]}
+          source={{ uri: data.avatarPhoto }}
+        />
 
         <View
-          style={{
-            width: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.03)",
-            paddingHorizontal: 16,
-            paddingTop: 16,
-            paddingBottom: 35,
-            flexWrap: "wrap",
-          }}
+          style={[
+            {
+              width: "88%",
+              backgroundColor: isUserComment
+                ? "#C3ECFF"
+                : "rgba(0, 0, 0, 0.03)",
+              paddingHorizontal: 16,
+              paddingTop: 16,
+              paddingBottom: 35,
+              flexWrap: "wrap",
+              borderRadius: 10,
+            },
+          ]}
         >
-          <Text style={{ flexShrink: 1, width: "100%" }}>
+          <Text
+            style={[
+              { width: "100%" },
+              // isUserComment && { textAlign: "right" }
+            ]}
+          >
             {data.commentText}
           </Text>
         </View>
@@ -138,6 +160,26 @@ const CommentsScreen = ({ route }) => {
         </Text>
       </View>
     );
+  };
+
+  const sortedComments = (array) => {
+    if (comments === []) {
+      return;
+    }
+    const parsedDate = (date) => {
+      return parse(date, "dd MMMM, yyyy | HH:mm", new Date(), {
+        locale: uk,
+      });
+    };
+
+    const newArray = [...array];
+
+    newArray.sort((a, b) => {
+      const aDate = parsedDate(a.data.commentLeaveDate);
+      const bDate = parsedDate(b.data.commentLeaveDate);
+      return aDate - bDate;
+    });
+    setSortedCommentsByDate(newArray);
   };
 
   const keyboardHide = () => {
@@ -161,7 +203,7 @@ const CommentsScreen = ({ route }) => {
           }}
         >
           <FlatList
-            style={{ paddingHorizontal: 16 }}
+            style={{ marginHorizontal: 16 }}
             ListHeaderComponent={
               <View
                 style={{
@@ -187,7 +229,7 @@ const CommentsScreen = ({ route }) => {
                 </View>
               </View>
             }
-            data={comments}
+            data={sortedCommentsByDate || []}
             keyExtractor={() => uuid.v4()}
             renderItem={renderItem}
           />

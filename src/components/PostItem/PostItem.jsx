@@ -19,10 +19,6 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   const allPosts = useSelector(selectAllPosts);
 
   useEffect(() => {
-    // dispatch(getCurrentAvatarOfUser(obj.item.userId));
-  }, []);
-
-  useEffect(() => {
     setLengthPosts(allPosts.length - 1);
   }, [allPosts]);
 

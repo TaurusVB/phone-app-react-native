@@ -6,6 +6,7 @@ import {
   getCommentsFromFirestore,
   getCurrentUserPosts,
   getCurrentAvatarOfUser,
+  updateCommentsAvatar,
 } from "./operations";
 
 const initialState = { postsList: [], comments: [], userPostsList: [] };
@@ -26,6 +27,8 @@ const postsSlice = createSlice({
       state.userPostsList = action.payload;
     },
     getCurrentAvatarOfUser,
+    updateCommentsAvatar,
+ 
   },
 });
 

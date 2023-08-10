@@ -2,7 +2,10 @@ import { View, FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import uuid from "react-native-uuid";
 import { useDispatch, useSelector } from "react-redux";
-import { getDataFromFirestore } from "../../redux/posts/operations";
+import {
+  getCommentsByUser,
+  getDataFromFirestore,
+} from "../../redux/posts/operations";
 import { selectAllPosts } from "../../redux/posts/selectors";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../../config";
