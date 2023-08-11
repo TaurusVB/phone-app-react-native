@@ -11,7 +11,7 @@ import { selectAllPosts, selectUserPosts } from "../../redux/posts/selectors";
 import { toggleLikeInFirebase } from "../../redux/posts/operations";
 
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
-import { auth, db } from "../../../config";
+import { db } from "../../../config";
 
 const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   const [lengthAllPosts, setLengthAllPosts] = useState(0);

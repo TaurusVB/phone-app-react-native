@@ -24,6 +24,7 @@ import { auth, db } from "../../../config";
 import { selectComments } from "../../redux/posts/selectors";
 import { FlatList } from "react-native";
 import { StyleSheet } from "react-native";
+import CommentItem from "../../components/CommentItem/CommentItem";
 
 const CommentsScreen = ({ route }) => {
   const [commentText, setCommentText] = useState("");
@@ -98,62 +99,6 @@ const CommentsScreen = ({ route }) => {
     Keyboard.dismiss();
   };
 
-  const renderItem = ({ item: { data } }) => {
-    const isUserComment = auth.currentUser.uid === data.userId;
-    return (
-      <View
-        style={{
-          width: "100%",
-          marginTop: 24,
-          display: "flex",
-          flexDirection: isUserComment ? "row-reverse" : "row",
-        }}
-      >
-        <Image
-          style={[
-            {
-              width: 28,
-              height: 28,
-              backgroundColor: "black",
-              borderRadius: 14,
-            },
-            isUserComment ? { marginLeft: 16 } : { marginRight: 16 },
-          ]}
-          source={{ uri: data.avatarPhoto }}
-        />
-
-        <View
-          style={[
-            {
-              width: "88%",
-              backgroundColor: isUserComment
-                ? "#C3ECFF"
-                : "rgba(0, 0, 0, 0.03)",
-              paddingHorizontal: 16,
-              paddingTop: 16,
-              paddingBottom: 35,
-              flexWrap: "wrap",
-              borderRadius: 10,
-            },
-          ]}
-        >
-          <Text style={[{ width: "100%" }]}>{data.commentText}</Text>
-        </View>
-        <Text
-          style={{
-            position: "absolute",
-            fontSize: 10,
-            color: "rgba(189, 189, 189, 1)",
-            right: 16,
-            bottom: 16,
-          }}
-        >
-          {data.commentLeaveDate}
-        </Text>
-      </View>
-    );
-  };
-
   const sortedComments = (array) => {
     if (comments === []) {
       return;
@@ -200,7 +145,7 @@ const CommentsScreen = ({ route }) => {
             }
             data={sortedCommentsByDate || []}
             keyExtractor={() => uuid.v4()}
-            renderItem={renderItem}
+            renderItem={(obj) => <CommentItem obj={obj} />}
           />
           <View style={styles.addCommentContainer}>
             <TextInput
