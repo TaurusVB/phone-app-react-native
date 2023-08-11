@@ -1,4 +1,13 @@
-import { collection, addDoc, getDocs, where, query } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  where,
+  query,
+  getDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../../config";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -110,24 +119,34 @@ const getUserAvatarFromFireBase = createAsyncThunk(
   }
 );
 
-// const getCommentsLength = createAsyncThunk(
-//   "posts/getCommentsLength",
-//   async (postId, thunkAPI) => {
-//     try {
-//       const snapshot = await getDocs(
-//         collection(db, `posts/${postId}/comments`)
-//       );
-//       const response = snapshot.docs.map((doc) => ({
-//         id: doc.id,
-//         data: doc.data(),
-//       }));
-//       console.log(response.length)
-//       return response.length;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.message);
-//     }
-//   }
-// );
+const toggleLikeInFirebase = createAsyncThunk(
+  "posts/toggleLike",
+  async (credentials, thunkAPI) => {
+    try {
+      const { postId, userId } = credentials;
+      const postRef = doc(db, `posts/${postId}`);
+      const postDoc = await getDoc(postRef);
+
+      const postData = postDoc.data();
+
+      if (postData.whoLeavedLike.includes(userId)) {
+        // Видаляємо userId, якщо вже є
+        const updatedWhoLivedLike = postData.whoLeavedLike.filter(
+          (id) => id !== userId
+        );
+        await updateDoc(postRef, { whoLeavedLike: updatedWhoLivedLike });
+        return false;
+      } else {
+        // Додаємо userId, якщо немає
+        const updatedWhoLivedLike = [...postData.whoLeavedLike, userId];
+        await updateDoc(postRef, { whoLeavedLike: updatedWhoLivedLike });
+        return true;
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 export {
   writeDataToFirestore,
@@ -137,5 +156,5 @@ export {
   getCurrentUserPosts,
   writeUserAvatarToFirebase,
   getUserAvatarFromFireBase,
-  // getCommentsLength,
+  toggleLikeInFirebase,
 };

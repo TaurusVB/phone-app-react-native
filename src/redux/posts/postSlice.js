@@ -7,6 +7,7 @@ import {
   getCurrentUserPosts,
   getCurrentAvatarOfUser,
   updateCommentsAvatar,
+  toggleLikeInFirebase,
 } from "./operations";
 
 const initialState = {
@@ -32,9 +33,7 @@ const postsSlice = createSlice({
     },
     getCurrentAvatarOfUser,
     updateCommentsAvatar,
-    // [getCommentsLength.fulfilled](state, action) {
-    //   state.commentsLength = action.payload;
-    // },
+    toggleLikeInFirebase,
   },
 });
 

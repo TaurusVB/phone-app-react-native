@@ -1,25 +1,26 @@
-import { Image, View } from "react-native";
-import UserPhoto from "../../../assets/UserPhoto.jpg";
-import Comments from "../../../assets/icons/message-circle.jpg";
-import Comments__orange from "../../../assets/icons/message-circle-orange.jpg";
-import { Text } from "react-native";
-import { TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
+import { Image, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import Comments from "../../../assets/icons/message-circle.jpg";
+import Comments__orange from "../../../assets/icons/message-circle-orange.jpg";
+import { Feather, AntDesign } from "@expo/vector-icons";
+
 import { selectAllPosts, selectUserPosts } from "../../redux/posts/selectors";
-import { getCommentsLength } from "../../redux/posts/operations";
+import { toggleLikeInFirebase } from "../../redux/posts/operations";
+
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
-import { db } from "../../../config";
+import { auth, db } from "../../../config";
 
 const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   const [lengthAllPosts, setLengthAllPosts] = useState(0);
   const [lengthUserPosts, setLengthUserPosts] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
+  const [isLikedPost, setIsLikedPost] = useState(false);
 
   const userPosts = useSelector(selectUserPosts);
   const allPosts = useSelector(selectAllPosts);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,6 +40,21 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
   }, []);
 
   useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, `posts/${obj.item.id}/whoLeavedLike`),
+      () => {
+        if (obj.item.data.whoLeavedLike.includes(auth.currentUser.uid)) {
+          setIsLikedPost(true);
+        } else {
+          setIsLikedPost(false);
+        }
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     setLengthAllPosts(allPosts.length - 1);
   }, [allPosts]);
 
@@ -50,13 +66,17 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
     const snapshot = await getDocs(collection(db, `posts/${postId}/comments`));
     let length = 0;
     snapshot.docs.map(() => (length += 1));
-    console.log(length);
     return length;
   };
 
   const handlePostComments = (postId, photoUrl) => {
     navigation.navigate("CommentsPost", { postId, photoUrl });
   };
+
+  const toogleLike = (postId, userId) => {
+    dispatch(toggleLikeInFirebase({ postId, userId }));
+  };
+
   const { item } = obj;
   const { data } = item;
   return (
@@ -94,10 +114,35 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
           ) : (
             <Image style={styles.commentIcon} source={Comments} />
           )}
-          <Text style={styles.textComment}>{commentsCount}</Text>
+          <Text
+            style={{
+              ...styles.textComment,
+              color: isProfileScreen ? "#212121" : "rgba(189, 189, 189, 1)",
+            }}
+          >
+            {commentsCount}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ flexDirection: "row" }}
+          style={styles.likesContainer}
+          onPress={() => toogleLike(item.id, auth.currentUser.uid)}
+        >
+          {isLikedPost ? (
+            <AntDesign name="like1" size={24} color="#FF6C00" />
+          ) : (
+            <AntDesign name="like2" size={24} color="#FF6C00" />
+          )}
+          <Text
+            style={{
+              ...styles.likesCount,
+              color: isProfileScreen ? "#212121" : "rgba(189, 189, 189, 1)",
+            }}
+          >
+            {data.whoLeavedLike.length}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ flexDirection: "row", marginLeft: "auto" }}
           activeOpacity={0.7}
           onPress={() => {
             navigation.navigate("MapPost", {
@@ -108,7 +153,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
           <Feather
             name="map-pin"
             size={24}
-            color="rgba(189, 189, 189, 1)"
+            color={isProfileScreen ? "#FF6C00" : "rgba(189, 189, 189, 1)"}
             style={{}}
           />
           <Text style={styles.textLocation}>{data.postLocation}</Text>
@@ -137,18 +182,23 @@ const styles = StyleSheet.create({
   },
   commentsAndLocationContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginTop: 8,
   },
   nameOfPost: { fontSize: 16, marginTop: 8 },
   commentIcon: { width: 24, height: 24 },
   textComment: {
     fontSize: 16,
-    color: "rgba(189, 189, 189, 1)",
     marginLeft: 6,
   },
-  textLocation: { fontSize: 16, marginLeft: 4 },
+  textLocation: {
+    fontSize: 16,
+    marginLeft: 4,
+    textDecorationLine: "underline",
+  },
   avatarImg: { width: 60, height: 60, borderRadius: 16 },
+  likesContainer: { marginLeft: 27, flexDirection: "row" },
+  likesCount: { fontSize: 16, paddingLeft: 6 },
 });
 
 export default PostItem;

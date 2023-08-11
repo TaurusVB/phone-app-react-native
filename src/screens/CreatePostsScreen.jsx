@@ -3,24 +3,27 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Text,
+  View,
+  Keyboard,
+  StyleSheet,
+  TextInput,
 } from "react-native";
-import { Text, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { TextInput } from "react-native-gesture-handler";
-import { Keyboard } from "react-native";
 import { useEffect, useState } from "react";
-import { Camera } from "expo-camera";
-import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import * as Location from "expo-location";
-import uuid from "react-native-uuid";
-import { auth, db, storage } from "../../config";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
+import uuid from "react-native-uuid";
+import { useIsFocused } from "@react-navigation/native";
+
+import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
+
+import { Camera } from "expo-camera";
+import * as Location from "expo-location";
+
+import { auth, storage } from "../../config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 import { writeDataToFirestore } from "../redux/posts/operations";
 import { selectUser } from "../redux/auth/selectors";
-import { useIsFocused } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setShowKeyboard] = useState(false);
@@ -131,6 +134,7 @@ const CreatePostsScreen = ({ navigation }) => {
         location: locationParams,
         email: auth.currentUser.email,
         avatarUser: auth.currentUser.photoURL,
+        whoLeavedLike: [],
       })
     );
   };

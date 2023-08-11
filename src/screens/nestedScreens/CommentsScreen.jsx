@@ -138,14 +138,7 @@ const CommentsScreen = ({ route }) => {
             },
           ]}
         >
-          <Text
-            style={[
-              { width: "100%" },
-              // isUserComment && { textAlign: "right" }
-            ]}
-          >
-            {data.commentText}
-          </Text>
+          <Text style={[{ width: "100%" }]}>{data.commentText}</Text>
         </View>
         <Text
           style={{
