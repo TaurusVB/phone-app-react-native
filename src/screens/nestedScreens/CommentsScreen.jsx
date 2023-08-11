@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Keyboard } from "react-native";
 import { TextInput } from "react-native";
@@ -23,8 +23,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../../config";
 import { selectComments } from "../../redux/posts/selectors";
 import { FlatList } from "react-native";
-import { SafeAreaView } from "react-native";
-import { ScrollView } from "react-native";
+import { StyleSheet } from "react-native";
 
 const CommentsScreen = ({ route }) => {
   const [commentText, setCommentText] = useState("");
@@ -188,46 +187,22 @@ const CommentsScreen = ({ route }) => {
       >
         <View
           style={{
-            flex: 1,
-            backgroundColor: "#fff",
-            borderTopWidth: 1,
-            borderTopColor: "rgba(33, 33, 33, 0.8)",
-            marginBottom: isShowKeyboard ? 224 : 0,
+            ...styles.screenContainer,
+            marginBottom: isShowKeyboard ? 85 : 0,
           }}
         >
           <FlatList
-            style={{ marginHorizontal: 16 }}
+            style={styles.commentList}
             ListHeaderComponent={
-              <View
-                style={{
-                  marginTop: 32,
-                  marginBottom: 32,
-                }}
-              >
-                <View
-                  style={{
-                    width: "100%",
-                    height: 240,
-                    borderRadius: 8,
-                  }}
-                >
-                  <Image
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: 8,
-                    }}
-                    source={{ uri: photoUrl }}
-                  />
-                </View>
+              <View style={styles.photoContainer}>
+                <Image style={styles.photo} source={{ uri: photoUrl }} />
               </View>
             }
             data={sortedCommentsByDate || []}
             keyExtractor={() => uuid.v4()}
             renderItem={renderItem}
           />
-
-          <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+          <View style={styles.addCommentContainer}>
             <TextInput
               onFocus={() => {
                 setShowKeyboard(true);
@@ -235,34 +210,12 @@ const CommentsScreen = ({ route }) => {
               placeholder="Коментувати..."
               value={commentText}
               onChangeText={setCommentText}
-              style={{
-                width: "100%",
-                height: 50,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 100,
-                backgroundColor: "#F6F6F6",
-                marginTop: 16,
-                fontSize: 16,
-                paddingLeft: 16,
-                paddingRight: 46,
-              }}
+              style={styles.inputComment}
             />
             <TouchableOpacity
               onPress={leaveComment}
               activeOpacity={0.7}
-              style={{
-                position: "absolute",
-                bottom: 8,
-                right: 8,
-                width: 34,
-                height: 34,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 100,
-                backgroundColor: "rgba(255, 108, 0, 1)",
-                marginTop: 32,
-              }}
+              style={styles.addCommentBtn}
             >
               <AntDesign name="arrowup" size={22} color="white" />
             </TouchableOpacity>
@@ -272,5 +225,49 @@ const CommentsScreen = ({ route }) => {
     </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(33, 33, 33, 0.8)",
+  },
+  commentList: { paddingHorizontal: 16 },
+  photoContainer: {
+    marginTop: 32,
+    marginBottom: 32,
+  },
+  photo: {
+    width: "100%",
+    height: 240,
+    borderRadius: 8,
+  },
+  addCommentContainer: { marginHorizontal: 16, marginBottom: 16 },
+  inputComment: {
+    width: "100%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+    marginTop: 16,
+    fontSize: 16,
+    paddingLeft: 16,
+    paddingRight: 46,
+  },
+  addCommentBtn: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    backgroundColor: "rgba(255, 108, 0, 1)",
+    marginTop: 32,
+  },
+});
 
 export default CommentsScreen;

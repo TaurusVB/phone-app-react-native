@@ -6,6 +6,8 @@ import RegistrationScreen from "./RegistrationScreen";
 import Home from "./Home";
 import { useEffect } from "react";
 import { authStateChanged } from "../redux/auth/operations";
+import MapPostScreen from "./nestedScreens/MapScreen";
+import CommentsPostScreen from "./nestedScreens/CommentsScreen";
 
 const MainStack = createStackNavigator();
 
@@ -44,6 +46,16 @@ const MainScreen = () => {
         options={{
           headerShown: false,
         }}
+      />
+      <MainStack.Screen
+        name="CommentsPost"
+        component={CommentsPostScreen}
+        options={{ title: "Коментарі" }}
+      />
+      <MainStack.Screen
+        name="MapPost"
+        component={MapPostScreen}
+        options={{ title: "Локація" }}
       />
     </MainStack.Navigator>
   );

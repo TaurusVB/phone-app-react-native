@@ -6,6 +6,7 @@ import Comments from "../../../assets/icons/message-circle.jpg";
 import Comments__orange from "../../../assets/icons/message-circle-orange.jpg";
 import { Feather, AntDesign } from "@expo/vector-icons";
 
+import { selectUserId } from "../../redux/auth/selectors";
 import { selectAllPosts, selectUserPosts } from "../../redux/posts/selectors";
 import { toggleLikeInFirebase } from "../../redux/posts/operations";
 
@@ -20,6 +21,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
 
   const userPosts = useSelector(selectUserPosts);
   const allPosts = useSelector(selectAllPosts);
+  const currentUserId = useSelector(selectUserId);
 
   const dispatch = useDispatch();
 
@@ -43,7 +45,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
     const unsubscribe = onSnapshot(
       collection(db, `posts/${obj.item.id}/whoLeavedLike`),
       () => {
-        if (obj.item.data.whoLeavedLike.includes(auth.currentUser.uid)) {
+        if (obj.item.data.whoLeavedLike.includes(currentUserId)) {
           setIsLikedPost(true);
         } else {
           setIsLikedPost(false);
@@ -125,7 +127,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.likesContainer}
-          onPress={() => toogleLike(item.id, auth.currentUser.uid)}
+          onPress={() => toogleLike(item.id, currentUserId)}
         >
           {isLikedPost ? (
             <AntDesign name="like1" size={24} color="#FF6C00" />
