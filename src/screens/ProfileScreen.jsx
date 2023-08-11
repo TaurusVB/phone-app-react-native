@@ -1,9 +1,9 @@
-import { FlatList, StyleSheet } from "react-native";
+import { Button, FlatList, Modal, StyleSheet, TextInput } from "react-native";
 import { Text, View } from "react-native";
 import PhotoBG from "../../assets/PhotoBG.jpg";
-import { AntDesign, EvilIcons, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, db } from "../../config";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -14,13 +14,14 @@ import {
   selectUserNickname,
 } from "../redux/auth/selectors";
 import * as ImagePicker from "expo-image-picker";
-import { selectUserPosts } from "../redux/posts/selectors";
+import { selectAllPosts, selectUserPosts } from "../redux/posts/selectors";
 import { Image } from "react-native";
 import uuid from "react-native-uuid";
 import { TouchableOpacity } from "react-native";
 import {
   logOut,
   updateAvatar,
+  updateNickname,
   uploadPhotoToStorage,
 } from "../redux/auth/operations";
 import ListEmptyComponent from "../components/ListEmptyComponent/ListEmptyComponent";
@@ -31,6 +32,10 @@ const ProfileScreen = ({ navigation }) => {
   const userId = useSelector(selectUserId);
   const userPosts = useSelector(selectUserPosts);
   const userNickname = useSelector(selectUserNickname);
+  const allPosts = useSelector(selectAllPosts);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newText, setNewText] = useState("");
 
   const userAvatarFromState = useSelector(selectUserAvatar);
 
@@ -58,7 +63,7 @@ const ProfileScreen = ({ navigation }) => {
       const downloadUrl = await dispatch(
         uploadPhotoToStorage(result.assets[0].uri)
       ).unwrap();
-      dispatch(updateAvatar({ photoURL: downloadUrl, posts: userPosts }));
+      dispatch(updateAvatar({ photoURL: downloadUrl, posts: allPosts }));
     }
   };
 
@@ -103,7 +108,53 @@ const ProfileScreen = ({ navigation }) => {
           <Feather name="log-out" size={24} color="#BDBDBD" />
         </TouchableOpacity>
 
-        <Text style={styles.displayName}>{userNickname}</Text>
+        <TouchableOpacity
+          style={styles.nickNameContainer}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <Text style={styles.displayName}>{userNickname}</Text>
+          <Feather
+            name="edit-3"
+            size={30}
+            color="black"
+            style={styles.iconRename}
+          />
+        </TouchableOpacity>
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TextInput
+                style={styles.textInput}
+                value={newText}
+                onChangeText={setNewText}
+                placeholder="Введіть новий нікнейм"
+              />
+              <View style={styles.modalButtons}>
+                <Button
+                  title="Відміна"
+                  onPress={() => {
+                    setIsModalVisible(false);
+                    setNewText("");
+                  }}
+                />
+                <Button
+                  title="Ок"
+                  onPress={() => {
+                    setIsModalVisible(false);
+                    dispatch(
+                      updateNickname({ nickname: newText, posts: allPosts })
+                    );
+                    setNewText("");
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
       <FlatList
         ListEmptyComponent={
@@ -161,7 +212,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 1)",
   },
   displayName: {
-    marginTop: 92,
     fontSize: 30,
     color: "rgba(33, 33, 33, 1)",
     fontWeight: "500",
@@ -171,6 +221,36 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 16,
     top: 22,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 10,
+    marginBottom: 10,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  nickNameContainer: {
+    flexDirection: "row",
+    marginTop: 92,
+    alignItems: "center",
+  },
+  iconRename: {
+    paddingLeft: 10,
   },
 });
 

@@ -102,6 +102,7 @@ const updateAvatar = createAsyncThunk(
 
       await updateProfile(auth.currentUser, { photoURL });
 
+      // тут оновлюється аватар на сторінці постів
       const userPosts = query(
         collection(db, "posts"),
         where("userId", "==", auth.currentUser.uid)
@@ -112,6 +113,7 @@ const updateAvatar = createAsyncThunk(
         await updateDoc(postRef, { avatarUser: photoURL });
       });
 
+      // тут оновлюється аватар на сторінці коментарів
       posts.forEach(async (item) => {
         const userComments = query(
           collection(db, `posts/${item.id}/comments`),
@@ -132,6 +134,50 @@ const updateAvatar = createAsyncThunk(
   }
 );
 
+const updateNickname = createAsyncThunk(
+  "auth/updateNickname",
+  async (credentials, thunkAPI) => {
+    try {
+      const { nickname, posts } = credentials;
+
+      await updateProfile(auth.currentUser, {
+        displayName: nickname,
+      });
+
+      await updateProfile(auth.currentUser, { displayName: nickname });
+
+      // тут оновлюється нікнейм на сторінці постів
+      const userPosts = query(
+        collection(db, "posts"),
+        where("userId", "==", auth.currentUser.uid)
+      );
+      const querySnapshot = await getDocs(userPosts);
+      querySnapshot.forEach(async (doc) => {
+        const postRef = doc.ref;
+        await updateDoc(postRef, { userName: nickname });
+      });
+
+      // тут оновлюється нікнейм на сторінці коментарів
+      posts.forEach(async (item) => {
+        const userComments = query(
+          collection(db, `posts/${item.id}/comments`),
+          where("userId", "==", auth.currentUser.uid)
+        );
+        const userCommentsSnapshot = await getDocs(userComments);
+
+        userCommentsSnapshot.forEach(async (doc) => {
+          const postRef = doc.ref;
+          await updateDoc(postRef, { nickname });
+        });
+      });
+
+      return auth.currentUser.displayName;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 export {
   registerDB,
   loginDB,
@@ -139,4 +185,5 @@ export {
   authStateChanged,
   uploadPhotoToStorage,
   updateAvatar,
+  updateNickname,
 };

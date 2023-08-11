@@ -110,6 +110,25 @@ const getUserAvatarFromFireBase = createAsyncThunk(
   }
 );
 
+// const getCommentsLength = createAsyncThunk(
+//   "posts/getCommentsLength",
+//   async (postId, thunkAPI) => {
+//     try {
+//       const snapshot = await getDocs(
+//         collection(db, `posts/${postId}/comments`)
+//       );
+//       const response = snapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         data: doc.data(),
+//       }));
+//       console.log(response.length)
+//       return response.length;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.message);
+//     }
+//   }
+// );
+
 export {
   writeDataToFirestore,
   getDataFromFirestore,
@@ -118,4 +137,5 @@ export {
   getCurrentUserPosts,
   writeUserAvatarToFirebase,
   getUserAvatarFromFireBase,
+  // getCommentsLength,
 };

@@ -9,7 +9,11 @@ import {
   updateCommentsAvatar,
 } from "./operations";
 
-const initialState = { postsList: [], comments: [], userPostsList: [] };
+const initialState = {
+  postsList: [],
+  comments: [],
+  userPostsList: [],
+};
 
 const postsSlice = createSlice({
   name: "posts",
@@ -28,7 +32,9 @@ const postsSlice = createSlice({
     },
     getCurrentAvatarOfUser,
     updateCommentsAvatar,
- 
+    // [getCommentsLength.fulfilled](state, action) {
+    //   state.commentsLength = action.payload;
+    // },
   },
 });
 

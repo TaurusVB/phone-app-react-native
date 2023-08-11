@@ -8,19 +8,51 @@ import { Feather } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllPosts } from "../../redux/posts/selectors";
-import { getCurrentAvatarOfUser } from "../../redux/posts/operations";
+import { selectAllPosts, selectUserPosts } from "../../redux/posts/selectors";
+import { getCommentsLength } from "../../redux/posts/operations";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { db } from "../../../config";
 
 const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
-  const [lengthPosts, setLengthPosts] = useState(0);
+  const [lengthAllPosts, setLengthAllPosts] = useState(0);
+  const [lengthUserPosts, setLengthUserPosts] = useState(0);
+  const [commentsCount, setCommentsCount] = useState(0);
 
+  const userPosts = useSelector(selectUserPosts);
+  const allPosts = useSelector(selectAllPosts);
   const dispatch = useDispatch();
 
-  const allPosts = useSelector(selectAllPosts);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, `posts/${obj.item.id}/comments`),
+      () => {
+        const fetchLength = async () => {
+          const length = await fetchCommentsLength(obj.item.id);
+          setCommentsCount(length);
+        };
+
+        fetchLength();
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
-    setLengthPosts(allPosts.length - 1);
+    setLengthAllPosts(allPosts.length - 1);
   }, [allPosts]);
+
+  useEffect(() => {
+    setLengthUserPosts(userPosts.length - 1);
+  }, [userPosts]);
+
+  const fetchCommentsLength = async (postId) => {
+    const snapshot = await getDocs(collection(db, `posts/${postId}/comments`));
+    let length = 0;
+    snapshot.docs.map(() => (length += 1));
+    console.log(length);
+    return length;
+  };
 
   const handlePostComments = (postId, photoUrl) => {
     navigation.navigate("CommentsPost", { postId, photoUrl });
@@ -31,7 +63,10 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
     <View
       style={{
         ...styles.itemContainer,
-        paddingBottom: lengthPosts === obj.index ? 32 : 0,
+        paddingBottom:
+          (isProfileScreen ? lengthUserPosts : lengthAllPosts) === obj.index
+            ? 32
+            : 0,
       }}
     >
       {userDetails && (
@@ -59,7 +94,7 @@ const PostItem = ({ obj, navigation, userDetails, isProfileScreen }) => {
           ) : (
             <Image style={styles.commentIcon} source={Comments} />
           )}
-          <Text style={styles.textComment}>comments</Text>
+          <Text style={styles.textComment}>{commentsCount}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ flexDirection: "row" }}

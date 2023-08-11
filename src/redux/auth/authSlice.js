@@ -6,6 +6,7 @@ import {
   authStateChanged,
   uploadPhotoToStorage,
   updateAvatar,
+  updateNickname,
 } from "./operations";
 
 const initialState = {
@@ -44,6 +45,9 @@ const authSlice = createSlice({
     },
     [updateAvatar.fulfilled](state, action) {
       state.user.photoURL = action.payload.photoURL;
+    },
+    [updateNickname.fulfilled](state, action) {
+      state.user.nickname = action.payload;
     },
   },
 });
