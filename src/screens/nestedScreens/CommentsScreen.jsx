@@ -25,6 +25,7 @@ import { selectComments } from "../../redux/posts/selectors";
 import { FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import CommentItem from "../../components/CommentItem/CommentItem";
+import ListEmptyComponent from "../../components/ListEmptyComponent/ListEmptyComponent";
 
 const CommentsScreen = ({ route }) => {
   const [commentText, setCommentText] = useState("");
@@ -142,6 +143,9 @@ const CommentsScreen = ({ route }) => {
               <View style={styles.photoContainer}>
                 <Image style={styles.photo} source={{ uri: photoUrl }} />
               </View>
+            }
+            ListEmptyComponent={
+              <ListEmptyComponent text="Тут ще немає коментарів, залиш перший коментар!" />
             }
             data={sortedCommentsByDate || []}
             keyExtractor={() => uuid.v4()}

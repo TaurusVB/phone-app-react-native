@@ -159,6 +159,7 @@ const ProfileScreen = ({ navigation }) => {
       <FlatList
         ListEmptyComponent={
           <ListEmptyComponent
+            useCreatePost
             navigation={navigation}
             text="Тут ще немає твоїх публікацій, але ти можеш створити їх, натиснувши на:"
           />

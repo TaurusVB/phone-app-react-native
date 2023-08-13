@@ -1,16 +1,18 @@
 import { AntDesign } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const ListEmptyComponent = ({ navigation, text }) => {
+const ListEmptyComponent = ({ navigation, text, useCreatePost }) => {
   return (
     <View style={styles.emptyListContainer}>
       <Text style={styles.emptyListText}>{text}</Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("CreatePosts")}
-        style={styles.createPostBtn}
-      >
-        <AntDesign name="plus" size={24} color={"white"} />
-      </TouchableOpacity>
+      {useCreatePost && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CreatePosts")}
+          style={styles.createPostBtn}
+        >
+          <AntDesign name="plus" size={24} color={"white"} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

@@ -37,6 +37,7 @@ const DefaultPostsScreen = ({ navigation }) => {
       <FlatList
         ListEmptyComponent={
           <ListEmptyComponent
+            useCreatePost
             navigation={navigation}
             text="Тут ще немає твоїх публікацій або інших користувачів, але ти можеш створити першу публікацію, яку побачать усі! Натиснувши на:"
           />
