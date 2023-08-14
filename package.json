@@ -45,7 +45,8 @@
     "react-native-vision-camera": "^2.15.4",
     "react-redux": "^8.1.1",
     "redux-persist": "^6.0.0",
-    "expo-dev-client": "~2.2.1"
+    "expo-dev-client": "~2.2.1",
+    "expo-build-properties": "~0.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
