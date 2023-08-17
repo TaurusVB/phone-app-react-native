@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const MapPostScreen = ({ route }) => {
   const {
@@ -11,6 +11,7 @@ const MapPostScreen = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       <MapView
+        provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={{
           latitude,

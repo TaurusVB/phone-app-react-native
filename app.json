@@ -43,7 +43,12 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.taurusvb1.AwesomeProject"
+      "package": "com.taurusvb1.AwesomeProject",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB9mmw4UfTFLxlxDUHVzAdp7owAEBhiQes"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

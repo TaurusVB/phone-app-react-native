@@ -41,6 +41,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     requestLocationPermission();
+    requestCameraPermission();
 
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -81,6 +82,13 @@ const CreatePostsScreen = ({ navigation }) => {
       } catch (error) {
         console.log("Error getting current location:", error);
       }
+    }
+  };
+
+  const requestCameraPermission = async () => {
+    let { status } = await Camera.requestPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
     }
   };
 
