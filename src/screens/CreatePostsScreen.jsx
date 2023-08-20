@@ -86,7 +86,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const requestCameraPermission = async () => {
-    let { status } = await Camera.requestPermissionsAsync();
+    let { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== "granted") {
       setErrorMsg("Permission to access location was denied");
     }
@@ -166,7 +166,7 @@ const CreatePostsScreen = ({ navigation }) => {
           display: isDoPhoto ? "none" : "flex",
         }}
       >
-        <Camera style={styles.camera} ref={setCamera}>
+        <Camera style={styles.camera} ref={setCamera} ratio="16:9">
           <TouchableOpacity
             style={styles.btnCamera}
             activeOpacity={0.7}

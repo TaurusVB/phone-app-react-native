@@ -28,7 +28,7 @@ const DefaultPostsScreen = ({ navigation }) => {
         justifyContent: "center",
         width: "100%",
         height: "95%",
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
         borderTopWidth: 1,
         borderTopColor: "rgba(33, 33, 33, 0.8)",
         flex: 1,

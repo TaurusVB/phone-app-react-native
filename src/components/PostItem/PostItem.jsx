@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
   userDetailsContainer: {
     flexDirection: "row",

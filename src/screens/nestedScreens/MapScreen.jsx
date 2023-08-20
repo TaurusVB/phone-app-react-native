@@ -13,7 +13,7 @@ const MapPostScreen = ({ route }) => {
       <MapView
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
-        initialRegion={{
+        region={{
           latitude,
           longitude,
           latitudeDelta: 0.001,
