@@ -55,14 +55,14 @@ Alternatively, you can also access the APK file by visiting the "About" section 
 
 ### Login
 
-![Login|250](./assets/photoForREADME/Login.jpg)
+<img src="./assets/photoForREADME/Login.jpg" alt="Login" width="250">
 
 - On this screen, existing users can log in using their email and password.
 - New users can navigate to the registration page.
 
 ### Registration
 
-![toRegistration](./assets/photoForREADME/toRegistration.jpg)![Registration](./assets/photoForREADME/Registration.jpg)![fillRegistration](./assets/photoForREADME/FillRegistration.jpg)
+<img src="./assets/photoForREADME/toRegistration.jpg" alt="toRegistration" width="250"><img src="./assets/photoForREADME/Registration.jpg" alt="Registration" width="250"><img src="./assets/photoForREADME/FillRegistration.jpg" alt="fillRegistration" width="250">
 
 - On the registration screen, new users can create an account.
 - Users need to enter their email, password, login, and choose a profile photo from the gallery.
@@ -75,19 +75,19 @@ Alternatively, you can also access the APK file by visiting the "About" section 
 
 After a successful login or registration, you will be redirected to the 'Publications' screen. Here, you can explore registered users and view their photo posts.
 
-![Publications Screen](./assets/photoForREADME/PublicationsScreen.jpg)
+<img src="./assets/photoForREADME/PublicationsScreen.jpg" alt="Publications Screen" width="250">
 
 On this screen, you can also click the 'Comments' button to access the comments page, where you can leave comments on other users' posts and reply to comments left on your posts.
 
-![to Comments Screen](./assets/photoForREADME/toComments.jpg)![Comments Screen](./assets/photoForREADME/Comments.jpg)
+<img src="./assets/photoForREADME/toComments.jpg" alt="to Comments Screen" width="250"><img src="./assets/photoForREADME/Comments.jpg" alt="Comments Screen" width="250">
 
 The 'Publications' screen includes a 'Like' feature. You can like posts from other users.
 
-![Like Icon](./assets/photoForREADME/leaveLike.jpg)
+<img src="./assets/photoForREADME/leaveLike.jpg" alt="Like Icon" width="250">
 
 The most exciting feature is the 'Location' button. When you tap it, you will be taken to a map showing the location where the photo of a specific post was taken.
 
-![to Location Icon](./assets/photoForREADME/toLocation.jpg)![Location screen](./assets/photoForREADME/Location.jpg)
+<img src="./assets/photoForREADME/toLocation.jpg" alt="to Location Icon" width="250"><img src="./assets/photoForREADME/Location.jpg" alt="Location screen" width="250">
 
 ---
 
@@ -95,15 +95,15 @@ The most exciting feature is the 'Location' button. When you tap it, you will be
 
 After tapping the 'Create Post' button on the 'Publications' screen, you'll be directed to the 'Create Post' screen.
 
-![Create Post Screen](./assets/photoForREADME/toCreatePost.jpg)
+<img src="./assets/photoForREADME/toCreatePost.jpg" alt="Create Post Screen" width="250">
 
 On this screen, the camera will open automatically, allowing you to take a photo.
 
-![Camera](./assets/photoForREADME/Camera.jpg)
+<img src="./assets/photoForREADME/Camera.jpg" alt="Camera Screen" width="250">
 
 Once you've successfully captured a photo, you can provide details for your post. These details include a post title and the location where the photo was taken.
 
-![Post Details](./assets/photoForREADME/DetailsOfPost.jpg)
+<img src="./assets/photoForREADME/DetailsOfPost.jpg" alt="Post Details" width="250">
 
 If you're not satisfied with the photo, you can replace it.
 
@@ -115,22 +115,22 @@ After filling in the post details, you can click the 'Publish' button. This will
 
 Welcome to your profile screen, where you'll find information about your account, including your posts, username, and profile picture.
 
-![toProfileScreen](./assets/photoForREADME/toUserScreen.jpg)![Profile Screen](./assets/photoForREADME/Profile.jpg)
+<img src="./assets/photoForREADME/toUserScreen.jpg" alt="toProfileScreen" width="250"><img src="./assets/photoForREADME/Profile.jpg" alt="Profile Screen" width="250">
 
 On this screen, you can:
 
 - View all the posts you've created.
 - Change your username (nickame).
 
-  ![Edit Username](./assets/photoForREADME/changeNickname.jpg)
+   <img src="./assets/photoForREADME/changeNickname.jpg" alt="Edit Username" width="250">
 
 - Update your profile picture.
 
-  ![Edit Profile Picture](./assets/photoForREADME/changeAvatar.jpg)
+   <img src="./assets/photoForREADME/changeAvatar.jpg" alt="Edit Profile Picture" width="250">
 
 - Log out of your account using the logout button.
 
-  ![Logout](./assets/photoForREADME/logOut.jpg)
+   <img src="./assets/photoForREADME/logOut.jpg" alt="Logout" width="250">
 
 ---
 
