@@ -55,7 +55,7 @@ Alternatively, you can also access the APK file by visiting the "About" section 
 
 ### Login
 
-![Login](./assets/photoForREADME/Login.jpg | width=200)
+![Login](./assets/photoForREADME/Login.jpg)
 
 - On this screen, existing users can log in using their email and password.
 - New users can navigate to the registration page.
