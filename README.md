@@ -67,7 +67,7 @@ Alternatively, you can also access the APK file by visiting the "About" section 
 - On the registration screen, new users can create an account.
 - Users need to enter their email, password, login, and choose a profile photo from the gallery.
 
-###### Additionally, there is a feature that, if you logged in previously, you won't need to enter your credentials again. The app will directly take you to the 'Publications' screen.
+ Additionally, there is a feature that, if you logged in previously, you won't need to enter your credentials again. The app will directly take you to the 'Publications' screen.
 
 ---
 
